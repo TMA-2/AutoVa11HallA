@@ -9,13 +9,10 @@ $AutoValHallA = New-Object -TypeName System.Windows.Forms.Form
 [System.Windows.Forms.CheckBox]$cbKarmotrine = $null
 [System.Windows.Forms.Label]$lblFlanergide = $null
 [System.Windows.Forms.Label]$lblPowderedDelta = $null
-[System.Windows.Forms.Label]$lblBronsonExt = $null
 [System.Windows.Forms.Label]$lblAdelhyde = $null
 [System.Windows.Forms.CheckBox]$cbAged = $null
 [System.Windows.Forms.CheckBox]$cbIced = $null
 [System.Windows.Forms.TextBox]$txtFlanergide = $null
-[System.Windows.Forms.TextBox]$txtPowderedD = $null
-[System.Windows.Forms.TextBox]$txtBronsonExt = $null
 [System.Windows.Forms.LinkLabel]$linkTag3 = $null
 [System.Windows.Forms.LinkLabel]$linkTag2 = $null
 [System.Windows.Forms.LinkLabel]$linkTag1 = $null
@@ -23,6 +20,12 @@ $AutoValHallA = New-Object -TypeName System.Windows.Forms.Form
 [System.ComponentModel.IContainer]$components = $null
 [System.Windows.Forms.NumericUpDown]$txtKarmotrine = $null
 [System.Windows.Forms.FlowLayoutPanel]$flowLayoutPanel1 = $null
+[System.Windows.Forms.TextBox]$txtPowderedDelta = $null
+[System.Windows.Forms.TextBox]$txtBronsonExtract = $null
+[System.Windows.Forms.Label]$lblBronsonExtract = $null
+[System.Windows.Forms.LinkLabel]$linkClear = $null
+[System.Windows.Forms.BindingSource]$bindingSource1 = $null
+[System.Windows.Forms.CheckBox]$cbBig = $null
 [System.Windows.Forms.GroupBox]$groupBox2 = $null
 function InitializeComponent
 {
@@ -31,25 +34,29 @@ $groupBox1 = (New-Object -TypeName System.Windows.Forms.GroupBox)
 $textMain = (New-Object -TypeName System.Windows.Forms.TextBox)
 $listDrinks = (New-Object -TypeName System.Windows.Forms.ListBox)
 $btnSend = (New-Object -TypeName System.Windows.Forms.Button)
+$bindingSource1 = (New-Object -TypeName System.Windows.Forms.BindingSource -ArgumentList @($components))
 $groupBox2 = (New-Object -TypeName System.Windows.Forms.GroupBox)
 $flowLayoutPanel1 = (New-Object -TypeName System.Windows.Forms.FlowLayoutPanel)
 $linkTag1 = (New-Object -TypeName System.Windows.Forms.LinkLabel)
 $linkTag2 = (New-Object -TypeName System.Windows.Forms.LinkLabel)
 $linkTag3 = (New-Object -TypeName System.Windows.Forms.LinkLabel)
+$linkClear = (New-Object -TypeName System.Windows.Forms.LinkLabel)
 $txtKarmotrine = (New-Object -TypeName System.Windows.Forms.NumericUpDown)
+$cbBig = (New-Object -TypeName System.Windows.Forms.CheckBox)
 $cbAged = (New-Object -TypeName System.Windows.Forms.CheckBox)
 $cbIced = (New-Object -TypeName System.Windows.Forms.CheckBox)
 $txtFlanergide = (New-Object -TypeName System.Windows.Forms.TextBox)
-$txtPowderedD = (New-Object -TypeName System.Windows.Forms.TextBox)
-$txtBronsonExt = (New-Object -TypeName System.Windows.Forms.TextBox)
+$txtPowderedDelta = (New-Object -TypeName System.Windows.Forms.TextBox)
+$txtBronsonExtract = (New-Object -TypeName System.Windows.Forms.TextBox)
 $txtAdelhyde = (New-Object -TypeName System.Windows.Forms.TextBox)
 $cbKarmotrine = (New-Object -TypeName System.Windows.Forms.CheckBox)
 $lblFlanergide = (New-Object -TypeName System.Windows.Forms.Label)
 $lblPowderedDelta = (New-Object -TypeName System.Windows.Forms.Label)
-$lblBronsonExt = (New-Object -TypeName System.Windows.Forms.Label)
+$lblBronsonExtract = (New-Object -TypeName System.Windows.Forms.Label)
 $lblAdelhyde = (New-Object -TypeName System.Windows.Forms.Label)
 $imageList1 = (New-Object -TypeName System.Windows.Forms.ImageList -ArgumentList @($components))
 $groupBox1.SuspendLayout()
+([System.ComponentModel.ISupportInitialize]$bindingSource1).BeginInit()
 $groupBox2.SuspendLayout()
 $flowLayoutPanel1.SuspendLayout()
 ([System.ComponentModel.ISupportInitialize]$txtKarmotrine).BeginInit()
@@ -61,9 +68,10 @@ $groupBox1.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.An
 $groupBox1.Controls.Add($textMain)
 $groupBox1.Controls.Add($listDrinks)
 $groupBox1.Controls.Add($btnSend)
+$groupBox1.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI Light',[System.Single]10,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $groupBox1.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]12,[System.Int32]12))
 $groupBox1.Name = [System.String]'groupBox1'
-$groupBox1.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]210,[System.Int32]268))
+$groupBox1.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]275,[System.Int32]359))
 $groupBox1.TabIndex = [System.Int32]1
 $groupBox1.TabStop = $false
 $groupBox1.Text = [System.String]'Drink List'
@@ -71,55 +79,75 @@ $groupBox1.Text = [System.String]'Drink List'
 #textMain
 #
 $textMain.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
-$textMain.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]6,[System.Int32]20))
+$textMain.AutoCompleteMode = [System.Windows.Forms.AutoCompleteMode]::Append
+$textMain.AutoCompleteSource = [System.Windows.Forms.AutoCompleteSource]::CustomSource
+$textMain.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
+$textMain.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]9,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$textMain.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]6,[System.Int32]19))
+$textMain.MaxLength = [System.Int32]255
 $textMain.Name = [System.String]'textMain'
-$textMain.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]136,[System.Int32]22))
+$textMain.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]201,[System.Int32]23))
 $textMain.TabIndex = [System.Int32]0
-$textMain.Text = [System.String]'Filter'
+$textMain.Text = [System.String]'drink name'
+$textMain.add_TextChanged($textMain_TextChanged)
+$textMain.add_DoubleClick($textMain_DoubleClick)
+$textMain.add_KeyPress($textMain_KeyPress)
 #
 #listDrinks
 #
 $listDrinks.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Bottom -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
-$listDrinks.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]9,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$listDrinks.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
+$listDrinks.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $listDrinks.FormattingEnabled = $true
-$listDrinks.ItemHeight = [System.Int32]15
-$listDrinks.Items.AddRange([System.Object[]]@([System.String]'Bad Touch',[System.String]'Beer',[System.String]'Bleeding Jane',[System.String]'etc.'))
+$listDrinks.ItemHeight = [System.Int32]17
 $listDrinks.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]6,[System.Int32]46))
 $listDrinks.Name = [System.String]'listDrinks'
-$listDrinks.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]198,[System.Int32]199))
-$listDrinks.TabIndex = [System.Int32]1
+$listDrinks.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]263,[System.Int32]291))
+$listDrinks.Sorted = $true
+$listDrinks.TabIndex = [System.Int32]2
+$listDrinks.add_SelectedValueChanged($listDrinks_SelectedValueChanged)
 #
 #btnSend
 #
 $btnSend.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Right)
+$btnSend.AutoEllipsis = $true
+$btnSend.Cursor = [System.Windows.Forms.Cursors]::Hand
 $btnSend.Enabled = $false
-$btnSend.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]148,[System.Int32]19))
+$btnSend.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]192)),([System.Int32]([System.Byte][System.Byte]255)),([System.Int32]([System.Byte][System.Byte]192)))
+
+$btnSend.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]255)),([System.Int32]([System.Byte][System.Byte]255)),([System.Int32]([System.Byte][System.Byte]192)))
+
+$btnSend.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
+$btnSend.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]9,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$btnSend.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]213,[System.Int32]19))
 $btnSend.Name = [System.String]'btnSend'
 $btnSend.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]56,[System.Int32]23))
-$btnSend.TabIndex = [System.Int32]2
+$btnSend.TabIndex = [System.Int32]1
 $btnSend.Text = [System.String]'Link'
 $btnSend.UseVisualStyleBackColor = $true
 $btnSend.add_Click($btnSend_Click)
+$btnSend.add_KeyPress($btnSend_KeyPress)
 #
 #groupBox2
 #
 $groupBox2.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Bottom -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
 $groupBox2.Controls.Add($flowLayoutPanel1)
 $groupBox2.Controls.Add($txtKarmotrine)
+$groupBox2.Controls.Add($cbBig)
 $groupBox2.Controls.Add($cbAged)
 $groupBox2.Controls.Add($cbIced)
 $groupBox2.Controls.Add($txtFlanergide)
-$groupBox2.Controls.Add($txtPowderedD)
-$groupBox2.Controls.Add($txtBronsonExt)
+$groupBox2.Controls.Add($txtPowderedDelta)
+$groupBox2.Controls.Add($txtBronsonExtract)
 $groupBox2.Controls.Add($txtAdelhyde)
 $groupBox2.Controls.Add($cbKarmotrine)
 $groupBox2.Controls.Add($lblFlanergide)
 $groupBox2.Controls.Add($lblPowderedDelta)
-$groupBox2.Controls.Add($lblBronsonExt)
+$groupBox2.Controls.Add($lblBronsonExtract)
 $groupBox2.Controls.Add($lblAdelhyde)
-$groupBox2.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]12,[System.Int32]286))
+$groupBox2.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]12,[System.Int32]377))
 $groupBox2.Name = [System.String]'groupBox2'
-$groupBox2.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]210,[System.Int32]230))
+$groupBox2.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]275,[System.Int32]245))
 $groupBox2.TabIndex = [System.Int32]2
 $groupBox2.TabStop = $false
 $groupBox2.Text = [System.String]'Details'
@@ -129,10 +157,12 @@ $groupBox2.Text = [System.String]'Details'
 $flowLayoutPanel1.Controls.Add($linkTag1)
 $flowLayoutPanel1.Controls.Add($linkTag2)
 $flowLayoutPanel1.Controls.Add($linkTag3)
+$flowLayoutPanel1.Controls.Add($linkClear)
 $flowLayoutPanel1.Dock = [System.Windows.Forms.DockStyle]::Bottom
-$flowLayoutPanel1.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]3,[System.Int32]189))
+$flowLayoutPanel1.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]9,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$flowLayoutPanel1.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]3,[System.Int32]204))
 $flowLayoutPanel1.Name = [System.String]'flowLayoutPanel1'
-$flowLayoutPanel1.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]204,[System.Int32]38))
+$flowLayoutPanel1.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]269,[System.Int32]38))
 $flowLayoutPanel1.TabIndex = [System.Int32]0
 #
 #linkTag1
@@ -140,48 +170,73 @@ $flowLayoutPanel1.TabIndex = [System.Int32]0
 $linkTag1.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Right)
 $linkTag1.AutoSize = $true
 $linkTag1.BackColor = [System.Drawing.Color]::Transparent
-$linkTag1.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$linkTag1.Cursor = [System.Windows.Forms.Cursors]::Hand
+$linkTag1.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$linkTag1.LinkBehavior = [System.Windows.Forms.LinkBehavior]::HoverUnderline
+$linkTag1.LinkColor = [System.Drawing.Color]::Blue
 $linkTag1.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]3,[System.Int32]0))
 $linkTag1.Name = [System.String]'linkTag1'
-$linkTag1.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]41,[System.Int32]19))
+$linkTag1.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]45,[System.Int32]19))
 $linkTag1.TabIndex = [System.Int32]9
 $linkTag1.TabStop = $true
 $linkTag1.Text = [System.String]'Tag 1'
+$linkTag1.VisitedLinkColor = [System.Drawing.Color]::IndianRed
 $linkTag1.add_LinkClicked($linkTag1_LinkClicked)
 #
 #linkTag2
 #
 $linkTag2.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
 $linkTag2.AutoSize = $true
-$linkTag2.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
-$linkTag2.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]50,[System.Int32]0))
+$linkTag2.Cursor = [System.Windows.Forms.Cursors]::Hand
+$linkTag2.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$linkTag2.LinkBehavior = [System.Windows.Forms.LinkBehavior]::HoverUnderline
+$linkTag2.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]54,[System.Int32]0))
 $linkTag2.Name = [System.String]'linkTag2'
-$linkTag2.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]41,[System.Int32]19))
+$linkTag2.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]45,[System.Int32]19))
 $linkTag2.TabIndex = [System.Int32]10
 $linkTag2.TabStop = $true
 $linkTag2.Text = [System.String]'Tag 2'
+$linkTag2.VisitedLinkColor = [System.Drawing.Color]::IndianRed
 $linkTag2.add_LinkClicked($linkTag2_LinkClicked)
 #
 #linkTag3
 #
 $linkTag3.AutoSize = $true
-$linkTag3.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
-$linkTag3.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]97,[System.Int32]0))
+$linkTag3.Cursor = [System.Windows.Forms.Cursors]::Hand
+$linkTag3.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$linkTag3.LinkBehavior = [System.Windows.Forms.LinkBehavior]::HoverUnderline
+$linkTag3.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]105,[System.Int32]0))
 $linkTag3.Name = [System.String]'linkTag3'
-$linkTag3.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]41,[System.Int32]19))
+$linkTag3.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]45,[System.Int32]19))
 $linkTag3.TabIndex = [System.Int32]11
 $linkTag3.TabStop = $true
 $linkTag3.Text = [System.String]'Tag 3'
+$linkTag3.VisitedLinkColor = [System.Drawing.Color]::IndianRed
 $linkTag3.add_LinkClicked($linkTag3_LinkClicked)
+#
+#linkClear
+#
+$linkClear.AutoSize = $true
+$linkClear.Cursor = [System.Windows.Forms.Cursors]::Hand
+$linkClear.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$linkClear.LinkBehavior = [System.Windows.Forms.LinkBehavior]::HoverUnderline
+$linkClear.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]156,[System.Int32]0))
+$linkClear.Name = [System.String]'linkClear'
+$linkClear.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]44,[System.Int32]19))
+$linkClear.TabIndex = [System.Int32]12
+$linkClear.TabStop = $true
+$linkClear.Text = [System.String]'Clear'
+$linkClear.VisitedLinkColor = [System.Drawing.Color]::IndianRed
+$linkClear.add_LinkClicked($linkClear_LinkClicked)
 #
 #txtKarmotrine
 #
 $txtKarmotrine.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Right)
 $txtKarmotrine.BackColor = [System.Drawing.Color]::LightCyan
 $txtKarmotrine.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
-$txtKarmotrine.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$txtKarmotrine.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $txtKarmotrine.InterceptArrowKeys = $false
-$txtKarmotrine.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]158,[System.Int32]113))
+$txtKarmotrine.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]223,[System.Int32]113))
 $txtKarmotrine.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]2,[System.Int32]1,[System.Int32]2,[System.Int32]1))
 $txtKarmotrine.Maximum = [System.Int32]10
 $txtKarmotrine.Name = [System.String]'txtKarmotrine'
@@ -190,17 +245,39 @@ $txtKarmotrine.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @(
 $txtKarmotrine.TabIndex = [System.Int32]8
 $txtKarmotrine.add_ValueChanged($txtKarmotrine_ValueChanged)
 #
+#cbBig
+#
+$cbBig.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
+$cbBig.AutoSize = $true
+$cbBig.FlatAppearance.CheckedBackColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]255)),([System.Int32]([System.Byte][System.Byte]192)),([System.Int32]([System.Byte][System.Byte]192)))
+
+$cbBig.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]192)),([System.Int32]([System.Byte][System.Byte]255)),([System.Int32]([System.Byte][System.Byte]255)))
+
+$cbBig.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
+$cbBig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$cbBig.ForeColor = [System.Drawing.Color]::Black
+$cbBig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]8,[System.Int32]169))
+$cbBig.Name = [System.String]'cbBig'
+$cbBig.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]52,[System.Int32]23))
+$cbBig.TabIndex = [System.Int32]3
+$cbBig.TabStop = $false
+$cbBig.Text = [System.String]'Big!'
+$cbBig.UseVisualStyleBackColor = $true
+$cbBig.add_CheckedChanged($cbBig_CheckedChanged)
+#
 #cbAged
 #
 $cbAged.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
 $cbAged.AutoSize = $true
+$cbAged.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $cbAged.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $cbAged.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]184)),([System.Int32]([System.Byte][System.Byte]81)),([System.Int32]([System.Byte][System.Byte]165)))
 
-$cbAged.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]8,[System.Int32]157))
+$cbAged.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]67,[System.Int32]140))
 $cbAged.Name = [System.String]'cbAged'
-$cbAged.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]64,[System.Int32]23))
+$cbAged.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]61,[System.Int32]23))
 $cbAged.TabIndex = [System.Int32]3
+$cbAged.TabStop = $false
 $cbAged.Text = [System.String]'Aged'
 $cbAged.UseVisualStyleBackColor = $true
 $cbAged.add_CheckedChanged($cbAged_CheckedChanged)
@@ -209,13 +286,15 @@ $cbAged.add_CheckedChanged($cbAged_CheckedChanged)
 #
 $cbIced.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
 $cbIced.AutoSize = $true
+$cbIced.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $cbIced.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $cbIced.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]33)),([System.Int32]([System.Byte][System.Byte]135)),([System.Int32]([System.Byte][System.Byte]170)))
 
-$cbIced.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]8,[System.Int32]136))
+$cbIced.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]8,[System.Int32]140))
 $cbIced.Name = [System.String]'cbIced'
-$cbIced.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]56,[System.Int32]23))
+$cbIced.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]53,[System.Int32]23))
 $cbIced.TabIndex = [System.Int32]2
+$cbIced.TabStop = $false
 $cbIced.Text = [System.String]'Iced'
 $cbIced.UseVisualStyleBackColor = $true
 #
@@ -225,11 +304,11 @@ $txtFlanergide.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Form
 $txtFlanergide.BackColor = [System.Drawing.Color]::Honeydew
 $txtFlanergide.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
 $txtFlanergide.Cursor = [System.Windows.Forms.Cursors]::Arrow
-$txtFlanergide.Enabled = $false
-$txtFlanergide.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10))
-$txtFlanergide.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]174,[System.Int32]88))
+$txtFlanergide.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10,[System.Drawing.FontStyle]::Bold))
+$txtFlanergide.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]239,[System.Int32]88))
 $txtFlanergide.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]2,[System.Int32]1,[System.Int32]2,[System.Int32]1))
 $txtFlanergide.Name = [System.String]'txtFlanergide'
+$txtFlanergide.ReadOnly = $true
 $txtFlanergide.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]30,[System.Int32]23))
 $txtFlanergide.TabIndex = [System.Int32]7
 $txtFlanergide.TabStop = $false
@@ -237,41 +316,41 @@ $txtFlanergide.Text = [System.String]'0'
 $txtFlanergide.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
 $txtFlanergide.add_TextChanged($txtFlanergide_TextChanged)
 #
-#txtPowderedD
+#txtPowderedDelta
 #
-$txtPowderedD.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Right)
-$txtPowderedD.BackColor = [System.Drawing.Color]::LightSteelBlue
-$txtPowderedD.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
-$txtPowderedD.Cursor = [System.Windows.Forms.Cursors]::Default
-$txtPowderedD.Enabled = $false
-$txtPowderedD.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10))
-$txtPowderedD.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]174,[System.Int32]64))
-$txtPowderedD.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]2,[System.Int32]1,[System.Int32]2,[System.Int32]1))
-$txtPowderedD.Name = [System.String]'txtPowderedD'
-$txtPowderedD.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]30,[System.Int32]23))
-$txtPowderedD.TabIndex = [System.Int32]6
-$txtPowderedD.TabStop = $false
-$txtPowderedD.Text = [System.String]'0'
-$txtPowderedD.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
-$txtPowderedD.add_TextChanged($txtPowderedD_TextChanged)
+$txtPowderedDelta.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Right)
+$txtPowderedDelta.BackColor = [System.Drawing.Color]::LightSteelBlue
+$txtPowderedDelta.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
+$txtPowderedDelta.Cursor = [System.Windows.Forms.Cursors]::Default
+$txtPowderedDelta.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10,[System.Drawing.FontStyle]::Bold))
+$txtPowderedDelta.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]239,[System.Int32]64))
+$txtPowderedDelta.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]2,[System.Int32]1,[System.Int32]2,[System.Int32]1))
+$txtPowderedDelta.Name = [System.String]'txtPowderedDelta'
+$txtPowderedDelta.ReadOnly = $true
+$txtPowderedDelta.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]30,[System.Int32]23))
+$txtPowderedDelta.TabIndex = [System.Int32]6
+$txtPowderedDelta.TabStop = $false
+$txtPowderedDelta.Text = [System.String]'0'
+$txtPowderedDelta.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
+$txtPowderedDelta.add_TextChanged($txtPowderedD_TextChanged)
 #
-#txtBronsonExt
+#txtBronsonExtract
 #
-$txtBronsonExt.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Right)
-$txtBronsonExt.BackColor = [System.Drawing.Color]::PeachPuff
-$txtBronsonExt.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
-$txtBronsonExt.Cursor = [System.Windows.Forms.Cursors]::Default
-$txtBronsonExt.Enabled = $false
-$txtBronsonExt.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10))
-$txtBronsonExt.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]174,[System.Int32]40))
-$txtBronsonExt.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]2,[System.Int32]1,[System.Int32]2,[System.Int32]1))
-$txtBronsonExt.Name = [System.String]'txtBronsonExt'
-$txtBronsonExt.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]30,[System.Int32]23))
-$txtBronsonExt.TabIndex = [System.Int32]5
-$txtBronsonExt.TabStop = $false
-$txtBronsonExt.Text = [System.String]'0'
-$txtBronsonExt.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
-$txtBronsonExt.add_TextChanged($txtBronsonExt_TextChanged)
+$txtBronsonExtract.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Right)
+$txtBronsonExtract.BackColor = [System.Drawing.Color]::PeachPuff
+$txtBronsonExtract.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
+$txtBronsonExtract.Cursor = [System.Windows.Forms.Cursors]::Default
+$txtBronsonExtract.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10,[System.Drawing.FontStyle]::Bold))
+$txtBronsonExtract.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]239,[System.Int32]40))
+$txtBronsonExtract.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]2,[System.Int32]1,[System.Int32]2,[System.Int32]1))
+$txtBronsonExtract.Name = [System.String]'txtBronsonExtract'
+$txtBronsonExtract.ReadOnly = $true
+$txtBronsonExtract.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]30,[System.Int32]23))
+$txtBronsonExtract.TabIndex = [System.Int32]5
+$txtBronsonExtract.TabStop = $false
+$txtBronsonExtract.Text = [System.String]'0'
+$txtBronsonExtract.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
+$txtBronsonExtract.add_TextChanged($txtBronsonExt_TextChanged)
 #
 #txtAdelhyde
 #
@@ -279,11 +358,12 @@ $txtAdelhyde.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.
 $txtAdelhyde.BackColor = [System.Drawing.Color]::RosyBrown
 $txtAdelhyde.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
 $txtAdelhyde.Cursor = [System.Windows.Forms.Cursors]::Default
-$txtAdelhyde.Enabled = $false
-$txtAdelhyde.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10))
-$txtAdelhyde.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]174,[System.Int32]16))
+$txtAdelhyde.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Consolas',[System.Single]10,[System.Drawing.FontStyle]::Bold))
+$txtAdelhyde.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]239,[System.Int32]16))
 $txtAdelhyde.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]2,[System.Int32]2,[System.Int32]2,[System.Int32]1))
+$txtAdelhyde.MaxLength = [System.Int32]3
 $txtAdelhyde.Name = [System.String]'txtAdelhyde'
+$txtAdelhyde.ReadOnly = $true
 $txtAdelhyde.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]30,[System.Int32]23))
 $txtAdelhyde.TabIndex = [System.Int32]4
 $txtAdelhyde.TabStop = $false
@@ -295,14 +375,18 @@ $txtAdelhyde.add_TextChanged($txtAdelhyde_TextChanged)
 #
 $cbKarmotrine.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
 $cbKarmotrine.AutoSize = $true
-$cbKarmotrine.BackColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]64)),([System.Int32]([System.Byte][System.Byte]64)),([System.Int32]([System.Byte][System.Byte]64)))
+$cbKarmotrine.FlatAppearance.BorderColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]197)),([System.Int32]([System.Byte][System.Byte]228)),([System.Int32]([System.Byte][System.Byte]228)))
 
+$cbKarmotrine.FlatAppearance.BorderSize = [System.Int32]2
+$cbKarmotrine.FlatAppearance.CheckedBackColor = [System.Drawing.Color]::Green
+$cbKarmotrine.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::Cyan
+$cbKarmotrine.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $cbKarmotrine.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
-$cbKarmotrine.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]197)),([System.Int32]([System.Byte][System.Byte]228)),([System.Int32]([System.Byte][System.Byte]228)))
+$cbKarmotrine.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]0)),([System.Int32]([System.Byte][System.Byte]192)),([System.Int32]([System.Byte][System.Byte]224)))
 
 $cbKarmotrine.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]8,[System.Int32]111))
 $cbKarmotrine.Name = [System.String]'cbKarmotrine'
-$cbKarmotrine.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]104,[System.Int32]23))
+$cbKarmotrine.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]101,[System.Int32]23))
 $cbKarmotrine.TabIndex = [System.Int32]1
 $cbKarmotrine.Text = [System.String]'Karmotrine'
 $cbKarmotrine.UseVisualStyleBackColor = $false
@@ -336,26 +420,26 @@ $lblPowderedDelta.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList
 $lblPowderedDelta.TabIndex = [System.Int32]0
 $lblPowderedDelta.Text = [System.String]'Powdered Delta'
 #
-#lblBronsonExt
+#lblBronsonExtract
 #
-$lblBronsonExt.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
-$lblBronsonExt.AutoSize = $true
-$lblBronsonExt.BackColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]64)),([System.Int32]([System.Byte][System.Byte]64)),([System.Int32]([System.Byte][System.Byte]64)))
+$lblBronsonExtract.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
+$lblBronsonExtract.AutoSize = $true
+$lblBronsonExtract.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
+$lblBronsonExtract.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$lblBronsonExtract.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]192)),([System.Int32]([System.Byte][System.Byte]160)),([System.Int32]([System.Byte][System.Byte]0)))
 
-$lblBronsonExt.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
-$lblBronsonExt.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]254)),([System.Int32]([System.Byte][System.Byte]199)),([System.Int32]([System.Byte][System.Byte]61)))
-
-$lblBronsonExt.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]8,[System.Int32]40))
-$lblBronsonExt.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]3))
-$lblBronsonExt.Name = [System.String]'lblBronsonExt'
-$lblBronsonExt.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]114,[System.Int32]19))
-$lblBronsonExt.TabIndex = [System.Int32]0
-$lblBronsonExt.Text = [System.String]'Bronson Extract'
+$lblBronsonExtract.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]8,[System.Int32]40))
+$lblBronsonExtract.Margin = (New-Object -TypeName System.Windows.Forms.Padding -ArgumentList @([System.Int32]3))
+$lblBronsonExtract.Name = [System.String]'lblBronsonExtract'
+$lblBronsonExtract.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]114,[System.Int32]19))
+$lblBronsonExtract.TabIndex = [System.Int32]0
+$lblBronsonExtract.Text = [System.String]'Bronson Extract'
 #
 #lblAdelhyde
 #
 $lblAdelhyde.Anchor = ([System.Windows.Forms.AnchorStyles][System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right)
 $lblAdelhyde.AutoSize = $true
+$lblAdelhyde.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $lblAdelhyde.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]10,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $lblAdelhyde.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]226)),([System.Int32]([System.Byte][System.Byte]39)),([System.Int32]([System.Byte][System.Byte]67)))
 
@@ -374,17 +458,21 @@ $imageList1.TransparentColor = [System.Drawing.Color]::Transparent
 #
 #AutoValHallA
 #
-$AutoValHallA.ClientSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]234,[System.Int32]528))
+$AutoValHallA.AcceptButton = $btnSend
+$AutoValHallA.BackColor = [System.Drawing.SystemColors]::Control
+$AutoValHallA.ClientSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]299,[System.Int32]634))
 $AutoValHallA.Controls.Add($groupBox2)
 $AutoValHallA.Controls.Add($groupBox1)
 $AutoValHallA.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $AutoValHallA.MaximizeBox = $false
-$AutoValHallA.MaximumSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]300,[System.Int32]1000))
+$AutoValHallA.MaximumSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]500,[System.Int32]1200))
 $AutoValHallA.MinimumSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]250,[System.Int32]500))
 $AutoValHallA.Name = [System.String]'AutoValHallA'
+$AutoValHallA.Text = [System.String]'AutoVa11HallA'
 $AutoValHallA.add_Load($AutoValHallA_Load)
 $groupBox1.ResumeLayout($false)
 $groupBox1.PerformLayout()
+([System.ComponentModel.ISupportInitialize]$bindingSource1).EndInit()
 $groupBox2.ResumeLayout($false)
 $groupBox2.PerformLayout()
 $flowLayoutPanel1.ResumeLayout($false)
@@ -399,13 +487,10 @@ Add-Member -InputObject $AutoValHallA -Name txtAdelhyde -Value $txtAdelhyde -Mem
 Add-Member -InputObject $AutoValHallA -Name cbKarmotrine -Value $cbKarmotrine -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name lblFlanergide -Value $lblFlanergide -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name lblPowderedDelta -Value $lblPowderedDelta -MemberType NoteProperty
-Add-Member -InputObject $AutoValHallA -Name lblBronsonExt -Value $lblBronsonExt -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name lblAdelhyde -Value $lblAdelhyde -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name cbAged -Value $cbAged -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name cbIced -Value $cbIced -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name txtFlanergide -Value $txtFlanergide -MemberType NoteProperty
-Add-Member -InputObject $AutoValHallA -Name txtPowderedD -Value $txtPowderedD -MemberType NoteProperty
-Add-Member -InputObject $AutoValHallA -Name txtBronsonExt -Value $txtBronsonExt -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name linkTag3 -Value $linkTag3 -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name linkTag2 -Value $linkTag2 -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name linkTag1 -Value $linkTag1 -MemberType NoteProperty
@@ -413,6 +498,12 @@ Add-Member -InputObject $AutoValHallA -Name imageList1 -Value $imageList1 -Membe
 Add-Member -InputObject $AutoValHallA -Name components -Value $components -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name txtKarmotrine -Value $txtKarmotrine -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name flowLayoutPanel1 -Value $flowLayoutPanel1 -MemberType NoteProperty
+Add-Member -InputObject $AutoValHallA -Name txtPowderedDelta -Value $txtPowderedDelta -MemberType NoteProperty
+Add-Member -InputObject $AutoValHallA -Name txtBronsonExtract -Value $txtBronsonExtract -MemberType NoteProperty
+Add-Member -InputObject $AutoValHallA -Name lblBronsonExtract -Value $lblBronsonExtract -MemberType NoteProperty
+Add-Member -InputObject $AutoValHallA -Name linkClear -Value $linkClear -MemberType NoteProperty
+Add-Member -InputObject $AutoValHallA -Name bindingSource1 -Value $bindingSource1 -MemberType NoteProperty
+Add-Member -InputObject $AutoValHallA -Name cbBig -Value $cbBig -MemberType NoteProperty
 Add-Member -InputObject $AutoValHallA -Name groupBox2 -Value $groupBox2 -MemberType NoteProperty
 }
 . InitializeComponent
