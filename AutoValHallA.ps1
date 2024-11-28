@@ -1,5 +1,4 @@
-$ErrorActionPreference = 'SilentlyContinue'
-
+#region UI Functions
 $btnSend_KeyPress = {
     if($input.KeyChar -eq 'Enter') {
         # Forward to Click event
@@ -7,52 +6,83 @@ $btnSend_KeyPress = {
     }
 }
 
+$textMain_KeyPress = {
+    # focus on the ListView if either arrow key is pressed
+    if($input.KeyChar -eq 'Up' -or $input.KeyChar -eq 'Down') {
+        $AutoValHallA.listDrinks.Focus()
+    }
+}
+
 $textMain_DoubleClick = {
     $this.Text = ""
+    $AutoValHallA.linkTag1.LinkVisited = $false
+    $AutoValHallA.linkTag2.LinkVisited = $false
+    $AutoValHallA.linkTag3.LinkVisited = $false
+    $AutoValHallA.linkClear.LinkVisited = $false
 }
 
 $listDrinks_SelectedValueChanged = {
+    # set selected drink
     $SelectedDrink = $script:DrinkList.Values | ? {$_.Name -eq $this.SelectedItem}
-    [int]$BigDrink = if($AutoValHallA.cbBig.Checked) { 2 } else { 1 }
-    # $AutoValHallA.textMain.Text = ""
+    # if Big is checked, double each ingredient
+    # BUG: Certain drinks double the ingredients when selected. No idea why.
+    [int]$BigDrink = 1
+    [int]$BigDrink = if($AutoValHallA.cbBig.Checked -eq $true) { 2 } else { 1 }
+    # set ingredient amounts
     $AutoValHallA.txtAdelhyde.Text = [int]$SelectedDrink.Ingredients.Adelhyde * $BigDrink
     $AutoValHallA.txtBronsonExtract.Text = [int]$SelectedDrink.Ingredients.BronsonExtract * $BigDrink
     $AutoValHallA.txtPowderedDelta.Text = [int]$SelectedDrink.Ingredients.PowderedDelta * $BigDrink
     $AutoValHallA.txtFlanergide.Text = [int]$SelectedDrink.Ingredients.Flanergide * $BigDrink
+    # set karmotrine amount
     if($SelectedDrink.Ingredients.Karmotrine -eq 'Optional') {
-        $AutoValHallA.cbKarmotrine.Checked = $true
-        $AutoValHallA.txtKarmotrine.Enabled = $true
-    } else {
         $AutoValHallA.cbKarmotrine.Checked = $false
-        $AutoValHallA.txtKarmotrine.Enabled = $false
+        $AutoValHallA.cbKarmotrine.ReadOnly = $false
+        $AutoValHallA.txtKarmotrine.Text = $script:OptionalKarmotrine
+        $AutoValHallA.txtKarmotrine.ReadOnly = $false
+    } else {
+        $AutoValHallA.cbKarmotrine.Checked = $true
+        $AutoValHallA.cbKarmotrine.ReadOnly = $true
+        $AutoValHallA.txtKarmotrine.ReadOnly = $true
         $AutoValHallA.txtKarmotrine.Text = [int]$SelectedDrink.Ingredients.Karmotrine * $BigDrink
     }
-    if($SelectedDrink.Iced) {
-        $AutoValHallA.cbIced.Checked = $true
-    } else {
-        $AutoValHallA.cbIced.Checked = $false
-    }
-    if($SelectedDrink.Aged) {
-        $AutoValHallA.cbAged.Checked = $true
-    } else {
-        $AutoValHallA.cbAged.Checked = $false
-    }
+    # set price
+    $AutoValHallA.txtPrice.Text = $SelectedDrink.Price
+    # set drink mix properties
+    $AutoValHallA.cbIced.Checked = $SelectedDrink.Iced
+    $AutoValHallA.cbAged.Checked = $SelectedDrink.Aged
+    $AutoValHallA.cbBlended.Checked = $SelectedDrink.Blend
+    # set tag text
     $AutoValHallA.linkTag1.Text = $SelectedDrink.Tags[0]
     $AutoValHallA.linkTag2.Text = $SelectedDrink.Tags[1]
     $AutoValHallA.linkTag3.Text = $SelectedDrink.Tags[2]
-}
 
-$textMain_KeyPress = {
-    # nothing to do here
+    # Retain last visited tag state
+    switch ($script:SelectedTag) {
+        $AutoValHallA.linkTag1.Text {
+            $AutoValHallA.LinkTag1.LinkVisited = $true
+        }
+        $AutoValHallA.linkTag2.Text {
+            $AutoValHallA.linkTag2.LinkVisited = $true
+        }
+        $AutoValHallA.linkTag3.Text {
+            $AutoValHallA.linkTag3.LinkVisited = $true
+        }
+        Default {
+            $AutoValHallA.linkTag1.LinkVisited = $false
+            $AutoValHallA.linkTag2.LinkVisited = $false
+            $AutoValHallA.linkTag3.LinkVisited = $false
+        }
+    
+    }
 }
 
 $textMain_TextChanged = {
-    $SelectedDrink = $this.Text
+    $Text = $this.Text
     # Garbage attempted data binding
     # $AutoValHallA.BindingSource1.Filter = "Name LIKE '*$SelectedDrink*'"
     
     $AutoValHallA.UseWaitCursor = $true
-    $script:DrinkList.Values | FilterDrinkList -Filter {$_.Name -like "*$SelectedDrink*"}
+    $script:DrinkList.Values | FilterDrinkList -Filter {$_.Name -like "*$Text*" -or $_.Tags -match $Text}
     $AutoValHallA.UseWaitCursor = $false
 
     <# $autoValHallA.listDrinks.Items.Clear()
@@ -63,18 +93,18 @@ $textMain_TextChanged = {
 
 $txtKarmotrine_ValueChanged = {
     # if enabled, auto-check and update optional karmotrine value
-    if($this.Text -eq 0) {
-        $AutoValHallA.cbKarmotrine.Checked = $false
-    } else {
-        $AutoValHallA.cbKarmotrine.Checked = $true
+    if($this.ReadOnly -eq $false) {
+        $script:OptionalKarmotrine = [int]$this.Text
     }
-    $script:OptionalKarmotrine = $this.Text
 }
 
 $cbKarmotrine_CheckedChanged = {
     if($this.Checked) {
-        $AutoValHallA.txtKarmotrine.Enabled = $true
+        $AutoValHallA.txtKarmotrine.ReadOnly = $false
         # $AutoValHallA.txtKarmotrine.Text = $script:OptionalKarmotrine
+    } else {
+        $AutoValHallA.txtKarmotrine.ReadOnly = $true
+        # $AutoValHallA.txtKarmotrine.Text = 0
     }
 }
 
@@ -99,7 +129,7 @@ $btnSend_Click = {
     $AutoValHallA.UseWaitCursor = $true
     if($this.Text -eq 'Link') {
         $script:GamehWnd = GetGameWindow
-        if($script:GamehWnd -ne 0) {
+        if($script:GamehWnd -ne 0 -and $null -ne $script:GamehWnd) {
             $this.Text = 'Mix'
             _Out "Game window found @ $script:GamehWnd"
         } else {
@@ -112,7 +142,14 @@ $btnSend_Click = {
     # only attempt to send keys if the game window exists
     If ($this.Text -eq 'Mix' -and $script:GamehWnd) {
         $DrinkSelected = $autoValHallA.listDrinks.SelectedItem
-        MakeDrink -DrinkName $DrinkSelected
+        # do nothing if no drink is selected
+        if($DrinkSelected -eq $null) {
+            _Out "No drink selected. Skipping MakeDrink call."
+            $AutoValHallA.UseWaitCursor = $false
+            Return
+        } else {
+            MakeDrink -DrinkName $DrinkSelected
+        }
     } else {
         # TODO: Set button text to 'Link' and set appropriate status message
         _Out 'Game process not found.'
@@ -124,9 +161,8 @@ $btnSend_Click = {
 }
 
 #region: Select drinks matching tag
-
-
 $linkTag1_LinkClicked = {
+    $script:SelectedTag = $this.Text
     # reset other link states
     $this.LinkVisited = $true
     $AutoValHallA.linkTag2.LinkVisited = $false
@@ -137,6 +173,7 @@ $linkTag1_LinkClicked = {
 }
 
 $linkTag2_LinkClicked = {
+    $script:SelectedTag = $this.Text
     $this.LinkVisited = $true
     $AutoValHallA.linkTag1.LinkVisited = $false
     $AutoValHallA.linkTag3.LinkVisited = $false
@@ -147,6 +184,7 @@ $linkTag2_LinkClicked = {
 }
 
 $linkTag3_LinkClicked = {
+    $script:SelectedTag = $this.Text
     $this.LinkVisited = $true
     $AutoValHallA.linkTag1.LinkVisited = $false
     $AutoValHallA.linkTag2.LinkVisited = $false
@@ -157,7 +195,8 @@ $linkTag3_LinkClicked = {
 }
 
 $linkClear_LinkClicked = {
-    $this.LinkVisited = $true
+    $script:SelectedTag = ""
+    $this.LinkVisited = $false
     $AutoValHallA.linkTag1.LinkVisited = $false
     $AutoValHallA.linkTag2.LinkVisited = $false
     $AutoValHallA.linkTag3.LinkVisited = $false
@@ -165,6 +204,7 @@ $linkClear_LinkClicked = {
     FillDrinkList
 }
 #endregion: Select drinks matching tag
+#endregion: UI Functions
 
 #region: Functions
 #region Set up logging
@@ -179,7 +219,9 @@ Enum LogLevel {
 function _Out {
     [CmdletBinding()]
     param (
-        [Parameter(Position = 0)]
+        [Parameter(
+            Position = 0,
+            ValueFromPipeline)]
         [string]
         $Message,
         [Parameter(
@@ -255,28 +297,29 @@ function FilterDrinkList {
 function GetGameWindow {
     # initial check for running game process
     $hWnd = Get-AU3WinHandle -Title 'VA-11 Hall-A: Cyberpunk Bartender Action'
-    if ($hWnd -ne 0) {
-        _out "Game window found @ $hWnd"
+    if ($hWnd -ne 0 -and $null -ne $hWnd) {
+        _out "Game window found @ $hWnd" -lvl Verbose
     } else {
-        _out 'Game window not found with Get-AU3WinHandle. Trying by process MainWindowHandle...'
-        $GameProcess = Get-Process 'VA-11 Hall A' -ea 0 # title: "VA-11 Hall-A: Cyberpunk Bartender Action"
+        _out 'Game window not found with Get-AU3WinHandle. Trying by process MainWindowHandle...' -lvl Warning
+        # window title: "VA-11 Hall-A: Cyberpunk Bartender Action"
+        $GameProcess = Get-Process 'VA-11 Hall A' -ea 0
         $hWnd = $GameProcess.MainWindowHandle
-        if($hWnd) {
-            _out "Game window found @ $hWnd from PID $($GameProcess.Id), Title $($GameProcess.MainWindowTitle)"
+        if($null -ne $hWnd) {
+            _out "Game window found @ $hWnd from PID $($GameProcess.Id), Title $($GameProcess.MainWindowTitle)" -lvl Verbose
         }
     }
 
-    If ($hWnd -ne 0) {
-        _Out "Game process found @ $hWnd"
+    If ($hWnd -ne 0 -and $null -ne $hWnd) {
+        _Out "Game process found @ $hWnd [$($hWnd.GetType())]" -lvl Verbose
         $autoValHallA.btnSend.Text = 'Mix'
-        $autoValHallA.btnSend.Enabled = $true
+        Return $hWnd
     } else {
-        _Out 'Game process not found.'
+        _Out 'Game process not found.' -lvl Warning
         $autoValHallA.btnSend.Text = 'Link'
+        Return $null
         # Write-Error -Exception ([System.Management.Automation.CommandNotFoundException]::new("Game process not found."))
         # Exit 4
     }
-    Return $hWnd
 }
 
 function MakeDrink {
@@ -289,23 +332,24 @@ function MakeDrink {
 
     # set up the wait time for blended drinks
     if ($Drink.Blend) {
-        $SleepWait = 3200
+        $SleepWait = 6000
     } else {
         # otherwise, stopping immediately is fine
-        $SleepWait = 1000
+        $SleepWait = 1500
     }
+
+    # _Out "Karmotrine value: $($Drink.Ingredients.Karmotrine), UI: $($AutoValHallA.txtKarmotrine.Text), Pref: $script:OptionalKarmotrine" -lvl Verbose
 
     # send keys
     if ($Drink.Ingredients.Karmotrine -eq 'Optional') {
         # send chars with a 0 aren't sent
         $SendString = '{{q {0}}}{{w {1}}}{{e {2}}}{{r {3}}}' -f $Drink.Ingredients.Adelhyde, $Drink.Ingredients.BronsonExtract, $Drink.Ingredients.PowderedDelta, $Drink.Ingredients.Flanergide
         # Optional karmotrine setting should be updated when the UI text changes
-        if (!$script:OptionalKarmotrine) {
-            $script:OptionalKarmotrine = $autoValHallA.txtKarmotrine.Text
+        if ($script:OptionalKarmotrine -gt 0 -and $AutovAlHallA.cbKarmotrine.Checked) {
+            $SendString += "{t $script:OptionalKarmotrine}"
         }
-        $SendString += "{t $script:OptionalKarmotrine}"
     } else {
-        $SendString = '{{q {0}}}{{w {1}}}{{e {2}}}{{r {3}}}{{t {3}}}' -f $Drink.Ingredients.Adelhyde, $Drink.Ingredients.BronsonExtract, $Drink.Ingredients.PowderedDelta, $Drink.Ingredients.Flanergide, $Drink.Ingredients.Karmotrine
+        $SendString = '{{q {0}}}{{w {1}}}{{e {2}}}{{r {3}}}{{t {4}}}' -f $Drink.Ingredients.Adelhyde, $Drink.Ingredients.BronsonExtract, $Drink.Ingredients.PowderedDelta, $Drink.Ingredients.Flanergide, $Drink.Ingredients.Karmotrine
     }
 
     _out "Sending keys for $DrinkName`: $SendString"
@@ -313,9 +357,9 @@ function MakeDrink {
     # disable button until mixing is done
     $AutoValHallA.btnSend.Enabled = $false
 
-    _out 'Attempting Assert-AU3WinActive...'
+    # _out 'Attempting Assert-AU3WinActive...' -lvl Verbose
     $GameWindow = Assert-AU3WinActive -WinHandle $script:GamehWnd
-    _Out "Assert-AU3WinActive result: $GameWindow"
+    _Out "Assert-AU3WinActive result: $GameWindow" -lvl Verbose
 
     # this is necessary as Assert-AU3WinActive doesn't want to work
     [Win32]::SetForegroundWindow($script:GamehWnd)
@@ -329,509 +373,43 @@ function MakeDrink {
         Send-AU3Key 's'
     }
 
-    Start-Sleep -ms 500
+    Start-Sleep -Milliseconds 500
 
     Send-AU3Key '{SPACE}'
 
     # sleep longer for blended drinks
-    Start-Sleep -ms $SleepWait
+    Start-Sleep -Milliseconds $SleepWait
 
     Send-AU3Key '{SPACE}'
 
     # re-enable send button
     $AutoValHallA.btnSend.Enabled = $true
 }
+function AlignWindow {
+    $GameWindowPos = Get-AU3WinPos -WinHandle $script:GamehWnd
+    _out "Game window position: X: $($GameWindowPos.X), Y: $($GameWindowPos.Y), W: $($GameWindowPos.Width), H: $($GameWindowPos.Height)"
+        
+    $iTargetX = $GameWindowPos.Right + 2
+    $iTargetY = $GameWindowPos.Y
+
+    # TODO: Attempt to keep form to the right of the game window
+    $AutoValHallA.Location.X = $iTargetX
+    $AutoValHallA.Location.Y = $iTargetY
+    $AutoValHallA.TopMost = $true
+}
 
 #endregion: Functions
 
-<#region alternate win activation
-$GameWindowPos = Get-AU3WinPos($hWnd)
-
-$iTargetX = $GameWindowPos[0] + 510
-$iTargetY = $GameWindowPos[1] + 340
-
-_Out ("Win x: " + $iTargetX + ", y: " + $iTargetY)
-#endregion alternate win activation
-#>
-
 #region Constants
-_out "Setting up ingredient list"
-$script:IngredientList = @{
-    Adelhyde = @{
-        Name = 'Adelhyde'
-        Key = 'q'
-        Color = '#e22743'
-    }
-    BronsonExtract = @{
-        Name = 'Bronson Extract'
-        Key = 'w'
-        Color = '#fec73d'
-    }
-    PowderedDelta = @{
-        Name = 'Powdered Delta'
-        Key = 'e'
-        Color = '#87a6e3'
-    }
-    Flanergide = @{
-        Name = 'Flanergide'
-        Key = 'r'
-        Color = '#568B28'
-    }
-    Karmotrine = @{
-        Name = 'Karmotrine'
-        Key = 't'
-        Color = '#c5e4e4'
-    }
-    Iced = @{
-        Name = 'Iced'
-        Key = 'a'
-        Color = '#2187aa'
-    }
-    Aged = @{
-        Name = 'Aged'
-        Key = 's'
-        Color = '#b851a5'
-    }
-}
-
-# drink data for binding
-$private:DrinkData = @(
-    [pscustomobject]@{
-        Name = 'Bad Touch'
-        Ingredients = [pscustomobject]@{
-            Adelhyde = 0
-            BronsonExtract = 2
-            PowderedDelta = 2
-            Flanergide = 2
-            Karmotrine = 4
-        }
-        Iced = $true
-        Aged = $false
-        Blend = $false
-        Tags = @('Sour', 'Classy', 'Vintage')
-        Price = 250
-    }
-    [pscustomobject]@{
-        Name = 'Beer'
-        Ingredients = [pscustomobject]@{
-            Adelhyde       = 1
-            BronsonExtract = 2
-            PowderedDelta  = 1
-            Flanergide     = 2
-            Karmotrine     = 4
-        }
-        Iced = $false
-        Aged = $false
-        Blend = $false
-        Tags = @('Bubbly', 'Classy', 'Vintage')
-        Price = 200
-    }
-    [pscustomobject]@{
-        Name        = 'Mercuryblast'
-        Ingredients = [pscustomobject]@{
-            Adelhyde       = 1
-            BronsonExtract = 1
-            PowderedDelta  = 3
-            Flanergide     = 3
-            Karmotrine     = 2
-        }
-        Iced        = $true
-        Aged        = $false
-        Blend       = $true
-        Tags        = @('sour', 'classy', 'burning')
-        Price       = 250
-    }
-)
-
 _out "Setting up drink list"
-$script:DrinkList = @{
-    BadTouch = @{
-        Name = "Bad Touch"
-        Ingredients = @{
-            Adelhyde = 0
-            BronsonExtract = 2
-            PowderedDelta = 2
-            Flanergide = 2
-            Karmotrine = 4
-        }
-        Iced = $true
-        Aged = $false
-        Blend = $false
-        Tags = @('Sour', 'Classy', 'Vintage')
-        Price = 250
-    }
-    Beer = @{
-        Name = "Beer"
-        Ingredients = @{
-            Adelhyde       = 1
-            BronsonExtract = 2
-            PowderedDelta  = 1
-            Flanergide     = 2
-            Karmotrine     = 4
-        }
-        Iced        = $false
-        Aged        = $false
-        Blend       = $false
-        Tags = @('Bubbly', 'Classy', 'Vintage')
-        Price = 200
-    }
-    BleedingJane = @{
-        Name = "Bleeding Jane"
-        Ingredients = @{
-            Adelhyde = 0
-            BronsonExtract = 1
-            PowderedDelta = 3
-            Flanergide = 3
-            Karmotrine = 0
-        }
-        Iced = $false
-        Aged = $false
-        Blend = $true
-        Tags = @('Spicy', 'Classic', 'Sobering')
-        Price = 200
-    }
-    BloomLight = @{
-        Name = "Bloom Light"
-        Ingredients = @{
-            Adelhyde        = 4
-            BronsonExtract  = 0
-            PowderedDelta   = 1
-            Flanergide      = 2
-            Karmotrine      = 3
-        }
-        Iced = $true
-        Aged = $true
-        Blend = $false
-        Tags = @('spicy', 'promo', 'bland')
-        Price = 230
-    }
-    BlueFairy = @{
-        Name = "Blue Fairy"
-        Ingredients = @{
-            Adelhyde = 4
-            BronsonExtract = 0
-            PowderedDelta = 0
-            Flanergide = 1
-            Karmotrine = "Optional"
-        }
-        Iced        = $false
-        Aged        = $true
-        Blend       = $false
-        Tags        = @('sweet', 'girly', 'soft')
-        Price       = 170
-    }
-    Brandtini = @{
-        Name = "Brandtini"
-        Ingredients = @{
-            Adelhyde = 6
-            BronsonExtract = 0
-            PowderedDelta = 3
-            Flanergide = 0
-            Karmotrine = 1
-        }
-        Iced    = $false
-        Aged    = $true
-        Blend   = $false
-        Tags    = @('sweet', 'classy', 'happy')
-        Price   = 250
+$script:DrinkList = Import-PowerShellDataFile "$PSScriptRoot\DrinkList.psd1"
 
-    }
-    CobaltVelvet = @{
-        Name = "Cobalt Velvet"
-        Ingredients = @{
-            Adelhyde = 2
-            BronsonExtract = 0
-            PowderedDelta = 0
-            Flanergide = 3
-            Karmotrine = 5
-        }
-        Iced = $true
-        Aged = $false
-        Blend = $false
-        Tags        = @('bubbly', 'classy', 'burning')
-        Price       = 280
-    }
-    CreviceSpike = @{
-        Name = "Crevice Spike"
-        Ingredients = @{
-            Adelhyde = 0
-            BronsonExtract = 0
-            PowderedDelta = 2
-            Flanergide = 4
-            Karmotrine = "Optional"
-        }
-        Iced = $false
-        Aged = $false
-        Blend = $true
-        Tags        = @('sour', 'manly', 'sobering')
-        Price       = 140
-    }
-    FlamingMaoi = @{
-        Name = "Flaming Maoi"
-        Ingredients = @{
-            Adelhyde        = 1
-            BronsonExtract  = 1
-            PowderedDelta   = 2
-            Flanergide      = 3
-            Karmotrine      = 5
-        }
-        Iced        = $false
-        Aged        = $false
-        Blend       = $false
-        Tags        = @('sour', 'classic', 'classy')
-        Price       = 150
-    }
-    FluffyDream = @{
-        Name = "Fluffy Dream"
-        Ingredients = @{
-            Adelhyde = 3
-            BronsonExtract = 0
-            PowderedDelta = 3
-            Flanergide = 0
-            Karmotrine = "Optional"
-        }
-        Iced        = $false
-        Aged        = $true
-        Blend       = $false
-        Tags        = @('sour', 'girly', 'soft')
-        Price       = 170
-    }
-    FringeWeaver = @{
-        Name = "Fringe Weaver"
-        Ingredients = @{
-            Adelhyde = 1
-            BronsonExtract = 0
-            PowderedDelta = 0
-            Flanergide = 0
-            Karmotrine = 9
-        }
-        Iced        = $false
-        Aged        = $true
-        Blend       = $false
-        Tags        = @('bubbly', 'classy', 'strong')
-        Price       = 260
-    }
-    FrothyWater = @{
-        Name = "Frothy Water"
-        Ingredients = @{
-            Adelhyde = 1
-            BronsonExtract = 1
-            PowderedDelta = 1
-            Flanergide = 1
-            Karmotrine = 0
-        }
-        Iced        = $false
-        Aged        = $true
-        Blend       = $false
-        Tags        = @('bubbly', 'classic', 'bland')
-        Price       = 150
-    }
-    GrizzlyTemple = @{
-        Name = "Grizzly Temple"
-        Ingredients = @{
-            Adelhyde = 3
-            BronsonExtract = 3
-            PowderedDelta = 3
-            Flanergide = 0
-            Karmotrine = 1
-        }
-        Iced        = $false
-        Aged        = $false
-        Blend       = $true
-        Tags        = @('bitter', 'promo', 'bland')
-        Price       = 220
-    }
-    GutPunch = @{
-        Name = "Gut Punch"
-        Ingredients = @{
-            Adelhyde = 0
-            BronsonExtract = 5
-            PowderedDelta = 0
-            Flanergide = 1
-            Karmotrine = "Optional"
-        }
-        Iced        = $false
-        Aged        = $true
-        Blend       = $false
-        Tags        = @('bitter', 'manly', 'strong')
-        Price       = 80
-    }
-    Marsblast = @{
-        Name = "Marsblast"
-        Ingredients = @{
-            Adelhyde = 0
-            BronsonExtract = 6
-            PowderedDelta = 1
-            Flanergide = 4
-            Karmotrine = 2
-        }
-        Iced        = $false
-        Aged        = $false
-        Blend       = $true
-        Tags        = @('spicy', 'manly', 'strong')
-        Price       = 170
-    }
-    Mercuryblast = @{
-        Name = "Mercuryblast"
-        Ingredients = @{
-            Adelhyde = 1
-            BronsonExtract = 1
-            PowderedDelta = 3
-            Flanergide = 3
-            Karmotrine = 2
-        }
-        Iced        = $true
-        Aged        = $false
-        Blend       = $true
-        Tags        = @('sour', 'classy', 'burning')
-        Price       = 250
-    }
-    # ------ continue here
-    Moonblast = @{
-        Name = "Moonblast"
-        Ingredients = @{
-            Adelhyde = 6
-            BronsonExtract = 0
-            PowderedDelta = 1
-            Flanergide = 1
-            Karmotrine = 2
-        }
-        Iced        = $true
-        Aged        = $false
-        Blend       = $true
-        Tags        = @('sweet', 'girly', 'happy')
-        Price       = 180
-    }
-    PianoMan = @{
-        Name = "Piano Man"
-        Ingredients = @{
-            Adelhyde = 2
-            BronsonExtract = 3
-            PowderedDelta = 5
-            Flanergide = 5
-            Karmotrine = 3
-        }
-        Iced        = $true
-        Aged        = $false
-        Blend       = $false
-        Tags        = @('sour', 'promo', 'strong')
-        Price       = 320
-
-    }
-    PianoWoman = @{
-        Name = "Piano Woman"
-        Ingredients = @{
-            Adelhyde = 5
-            BronsonExtract = 5
-            PowderedDelta = 2
-            Flanergide = 3
-            Karmotrine = 3
-        }
-        Iced = $false
-        Aged = $true
-        Blend = $false
-        Tags        = @('sweet', 'promo', 'happy')
-        Price       = 320
-
-    }
-    PileDriver = @{
-        Name = "Pile Driver"
-        Ingredients = @{
-            Adelhyde = 0
-            BronsonExtract = 3
-            PowderedDelta = 0
-            Flanergide = 3
-            Karmotrine = 4
-        }
-        Iced = $false
-        Aged = $false
-        Blend = $false
-        Tags        = @('bitter', 'manly', 'burning')
-        Price       = 160
-
-    }
-    SparkleStar = @{
-        Name = "Sparkle Star"
-        Ingredients = @{
-            Adelhyde = 2
-            BronsonExtract = 0
-            PowderedDelta = 1
-            Flanergide = 0
-            Karmotrine = "Optional"
-        }
-        Iced = $false
-        Aged = $true
-        Blend = $false
-        Tags        = @('sweet', 'girly', 'happy')
-        Price       = 150
-
-    }
-    SugarRush = @{
-        Name = "Sugar Rush"
-        Ingredients = @{
-            Adelhyde = 2
-            BronsonExtract = 0
-            PowderedDelta = 1
-            Flanergide = 0
-            Karmotrine = "Optional"
-        }
-        Iced = $false
-        Aged = $false
-        Blend = $false
-        Tags        = @('sweet', 'girly', 'happy')
-        Price       = 150
-
-    }
-    SunshineCloud = @{
-        Name = "Sunshine Cloud"
-        Ingredients = @{
-            Adelhyde = 2
-            BronsonExtract = 2
-            PowderedDelta = 0
-            Flanergide = 0
-            Karmotrine = "Optional"
-        }
-        Iced = $true
-        Aged = $false
-        Blend = $true
-        Tags        = @('bitter', 'girly', 'soft')
-        Price       = 150
-
-    }
-    Suplex = @{
-        Name = "Suplex"
-        Ingredients = @{
-            Adelhyde = 0
-            BronsonExtract = 4
-            PowderedDelta = 0
-            Flanergide = 3
-            Karmotrine = 3
-        }
-        Iced = $true
-        Aged = $false
-        Blend = $false
-        Tags        = @('bitter', 'manly', 'burning')
-        Price       = 160
-    }
-    ZenStar = @{
-        Name = "Zen Star"
-        Ingredients = @{
-            Adelhyde = 4
-            BronsonExtract = 4
-            PowderedDelta = 4
-            Flanergide = 4
-            Karmotrine = 4
-        }
-        Iced        = $true
-        Aged        = $false
-        Blend       = $false
-        Tags        = @('sour', 'promo', 'bland')
-        Price       = 210
-    }
-}
+# this is currently unused
+$script:IngredientList = $script:DrinkList.Ingredients
 
 # user preference
 $script:OptionalKarmotrine = 0
+$script:SelectedTag = ""
 
 # this has to be used instead of Set-Au3WinActive for whatever reason
 $script:TypeSetFG = @'
@@ -845,7 +423,7 @@ $script:TypeSetFG = @'
 Add-Type -TypeDefinition $script:TypeSetFG -Language CSharp
 #endregion
 
-#region Get AU3 module and window
+#region: Load AutoItX module
 try {
     _out "Importing AutoItX module" -lvl Verbose
     Add-Type -AssemblyName 'System.Windows.Forms'
@@ -858,7 +436,36 @@ try {
 
 # Game is locked at 30FPS / ~33.3 ms
 Set-AU3Option -Option "SendKeyDelay" -Value 50
-#endregion get au3 module and window
+#endregion: Load AutoItX module
+
+$AutoValHallA_Activated = {
+    AlignWindow
+}
+
+$AutoValHallA_FormClosing = {
+    $VerbosePreference = 'SilentlyContinue'
+    $script:sw.Stop()
+
+    _out "Closing AutoValHallA with return $($AutoValHallA.DialogResult) after $($sw.Elapsed.ToString('hh\:mm\:ss'))"
+}
+
+$AutoValHallA_Load = {
+    # initial window check
+    _out "Initial check for game window..."
+    $script:GamehWnd = GetGameWindow
+
+    if($script:GamehWnd) {
+        _out "Handle found: $script:GamehWnd"
+    } else {
+        _out "Window not found. Waiting for user to link game window." -lvl Warning
+    }
+
+    _out "Populating initial drink list"
+    FillDrinkList
+
+    $script:ProcessChecked = $false
+    $script:sw = [System.Diagnostics.Stopwatch]::StartNew()
+}
 
 # load form
 . (Join-Path $PSScriptRoot 'AutoValHallA.designer.ps1')
@@ -869,17 +476,43 @@ $AutoValHallA.listDrinks.DataSource = $AutoValHallA.BindingSource1
 $AutoValHallA.listDrinks.DisplayMember = 'Name'
 #>
 
-# initial window check
-_out "Looking for game window..."
-$script:GamehWnd = GetGameWindow
+$ErrorActionPreference = 'SilentlyContinue'
+$VerbosePreference = 'Continue'
 
-_out "Game window handle: $script:GamehWnd"
+# NOTE: Moved to Autovalhalla_load
 
-FillDrinkList
-
+_Out "Starting form"
 $AutoValHallA.Show()
+$AutoValHallA.Focus()
+
 
 while ($AutoValHallA.Visible) {
     [System.Windows.Forms.Application]::DoEvents()
-    Start-Sleep -Milliseconds 50
+    Start-Sleep -Milliseconds 30
+    
+    if($script:GamehWnd -and $script:sw.Elapsed.Minutes%5 -eq 0 -and $script:sw.Elapsed.Seconds%10 -eq 0) {
+        AlignWindow
+    }
+
+    # check for window every 60 seconds
+    if($sw.Elapsed.Seconds -eq 1 -and !$ProcessChecked) {
+        $GameProcess = Get-Process "VA-11 Hall A" -ea SilentlyContinue
+        # process found
+        if($GameProcess) {
+            # handle still valid
+            if($GameProcess.MainWindowHandle -ne $script:GamehWnd) {
+                # handle changed
+                _Out "Game window handle changed from $script:GamehWnd to $($GameProcess.MainWindowHandle)" -lvl Verbose
+                $script:GamehWnd = $GameProcess.MainWindowHandle
+            }
+        } else {
+            _Out "Game window not found." -lvl Warning
+            $AutoValHallA.btnSend.Text = 'Link'
+        }
+        $ProcessChecked = $true
+    } elseif([math]::Floor($sw.Elapsed.TotalSeconds)%360 -eq 0) {
+        # reset handle check every 5 minutes
+        $ProcessChecked = $false
+    }
 }
+

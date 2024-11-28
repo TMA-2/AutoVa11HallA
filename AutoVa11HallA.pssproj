@@ -8,6 +8,33 @@
     <AssemblyName>MyApplication</AssemblyName>
     <Name>AutoVa11HallA</Name>
     <ProjectHome />
+    <ManifestPath>$(OutDir)\$(ProjectName).psd1</ManifestPath>
+    <Author>Jon Dunham</Author>
+    <Version>0.1.4</Version>
+    <Guid>d8592339-36b0-4bff-a714-6153626894b3</Guid>
+    <PowerShellVersion>Windows PowerShell</PowerShellVersion>
+    <ProcessorArchitecture />
+    <PackageAsExecutable>True</PackageAsExecutable>
+    <Bundle>True</Bundle>
+    <Obfuscate>False</Obfuscate>
+    <HideConsoleWindow>True</HideConsoleWindow>
+    <RequireElevation>False</RequireElevation>
+    <PackageModules>True</PackageModules>
+    <HighDPISupport>True</HighDPISupport>
+    <DotNetVersion>net472</DotNetVersion>
+    <FileVersion>0.1.4</FileVersion>
+    <FileDescription>Auto VA-11 Hall-A</FileDescription>
+    <ProductName>Auto VA-11 Hall-A Game Utility</ProductName>
+    <ProductVersion>0.1.4</ProductVersion>
+    <Copyright>(c) Jon Dunham</Copyright>
+    <ApplicationIconPath>C:\Users\tma2\OneDrive\Source\AutoVa11HallA\Resources\Jill64.ico</ApplicationIconPath>
+    <PackageType>Console</PackageType>
+    <PowerShellArgs>-NoProfile -Interactive</PowerShellArgs>
+    <PackagePlatform>x64</PackagePlatform>
+    <OperatingSystem>Windows</OperatingSystem>
+    <Description>A utility for the game VA-11 Hall-A to mix drinks with a single click instead of having to manually look up the ingredients and add them each time.</Description>
+    <PackageEntryPoint>AutoValHallA.ps1</PackageEntryPoint>
+    <OutputName>AutoVa11HallA</OutputName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -117,7 +144,6 @@
     <Content Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </Content>
-    <Content Include="WpfWindow1.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoValHallA.designer.ps1">
@@ -127,10 +153,7 @@
     <Compile Include="AutoValHallA.ps1">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WpfWindow1.xaml.ps1">
-      <SubType>Code</SubType>
-      <DependentUpon>WpfWindow1.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="DrinkList.psd1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AutoValHallA.resx">
