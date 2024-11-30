@@ -98,7 +98,6 @@ $textMain.TabIndex = [System.Int32]0
 $textMain.Text = [System.String]'Double-click to clear'
 $textMain.add_TextChanged($textMain_TextChanged)
 $textMain.add_DoubleClick($textMain_DoubleClick)
-$textMain.add_KeyPress($textMain_KeyPress)
 #
 #listDrinks
 #
@@ -132,7 +131,6 @@ $btnSend.TabIndex = [System.Int32]1
 $btnSend.Text = [System.String]'Link'
 $btnSend.UseVisualStyleBackColor = $true
 $btnSend.add_Click($btnSend_Click)
-$btnSend.add_KeyPress($btnSend_KeyPress)
 #
 #groupBox2
 #

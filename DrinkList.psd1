@@ -66,7 +66,7 @@
         Tags        = @('Bubbly', 'Classy', 'Vintage')
         Price       = 200
     }
-    BleedingJane  = @{
+    BleedingJane  = @{ # DOUBLED
         Name        = 'Bleeding Jane'
         Ingredients = @{
             Adelhyde       = 0
@@ -142,7 +142,7 @@
         Tags        = @('Bubbly', 'Classy', 'Burning')
         Price       = 280
     }
-    CreviceSpike  = @{
+    CreviceSpike  = @{ # DOUBLED
         Name        = 'Crevice Spike'
         Ingredients = @{
             Adelhyde       = 0
@@ -217,7 +217,7 @@
         Tags        = @('Bubbly', 'Classic', 'Bland')
         Price       = 150
     }
-    GrizzlyTemple = @{
+    GrizzlyTemple = @{ # DOUBLED
         Name        = 'Grizzly Temple'
         Ingredients = @{
             Adelhyde       = 3
@@ -247,7 +247,7 @@
         Tags        = @('Bitter', 'Manly', 'Strong')
         Price       = 80
     }
-    Marsblast     = @{
+    Marsblast     = @{ # DOUBLED
         Name        = 'Marsblast'
         Ingredients = @{
             Adelhyde       = 0
@@ -306,7 +306,6 @@
         Blend       = $false
         Tags        = @('Sour', 'Promo', 'Strong')
         Price       = 320
-
     }
     PianoWoman    = @{
         Name        = 'Piano Woman'
@@ -322,7 +321,6 @@
         Blend       = $false
         Tags        = @('Sweet', 'Promo', 'Happy')
         Price       = 320
-
     }
     PileDriver    = @{
         Name        = 'Pile Driver'
@@ -338,7 +336,6 @@
         Blend       = $false
         Tags        = @('Bitter', 'Manly', 'Burning')
         Price       = 160
-
     }
     SparkleStar   = @{
         Name        = 'Sparkle Star'
@@ -354,7 +351,6 @@
         Blend       = $false
         Tags        = @('Sweet', 'Girly', 'Happy')
         Price       = 150
-
     }
     SugarRush     = @{
         Name        = 'Sugar Rush'
@@ -372,7 +368,7 @@
         Price       = 150
 
     }
-    SunshineCloud = @{
+    SunshineCloud = @{ # DOUBLED
         Name        = 'Sunshine Cloud'
         Ingredients = @{
             Adelhyde       = 2
