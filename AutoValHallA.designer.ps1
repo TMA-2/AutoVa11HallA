@@ -33,6 +33,7 @@ $AutoValHallA = New-Object -TypeName System.Windows.Forms.Form
 function InitializeComponent
 {
 $components = (New-Object -TypeName System.ComponentModel.Container)
+$resources = . (Join-Path $PSScriptRoot 'AutoValHallA.resources.ps1')
 $groupBox1 = (New-Object -TypeName System.Windows.Forms.GroupBox)
 $textMain = (New-Object -TypeName System.Windows.Forms.TextBox)
 $listDrinks = (New-Object -TypeName System.Windows.Forms.ListBox)
@@ -264,7 +265,6 @@ $txtPrice.ReadOnly = $true
 $txtPrice.RightToLeft = [System.Windows.Forms.RightToLeft]::Yes
 $txtPrice.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]46,[System.Int32]23))
 $txtPrice.TabIndex = [System.Int32]5
-$txtPrice.add_ValueChanged($txtKarmotrine_ValueChanged)
 #
 #txtKarmotrine
 #
@@ -300,7 +300,6 @@ $cbBlended.TabIndex = [System.Int32]3
 $cbBlended.TabStop = $false
 $cbBlended.Text = [System.String]'Blended'
 $cbBlended.UseVisualStyleBackColor = $true
-$cbBlended.add_CheckedChanged($cbBig_CheckedChanged)
 #
 #cbBig
 #
@@ -335,7 +334,6 @@ $cbAged.TabIndex = [System.Int32]3
 $cbAged.TabStop = $false
 $cbAged.Text = [System.String]'Aged'
 $cbAged.UseVisualStyleBackColor = $true
-$cbAged.add_CheckedChanged($cbAged_CheckedChanged)
 #
 #cbIced
 #
@@ -369,7 +367,6 @@ $txtFlanergide.TabIndex = [System.Int32]7
 $txtFlanergide.TabStop = $false
 $txtFlanergide.Text = [System.String]'0'
 $txtFlanergide.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
-$txtFlanergide.add_TextChanged($txtFlanergide_TextChanged)
 #
 #txtPowderedDelta
 #
@@ -387,7 +384,6 @@ $txtPowderedDelta.TabIndex = [System.Int32]6
 $txtPowderedDelta.TabStop = $false
 $txtPowderedDelta.Text = [System.String]'0'
 $txtPowderedDelta.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
-$txtPowderedDelta.add_TextChanged($txtPowderedD_TextChanged)
 #
 #txtBronsonExtract
 #
@@ -405,7 +401,6 @@ $txtBronsonExtract.TabIndex = [System.Int32]5
 $txtBronsonExtract.TabStop = $false
 $txtBronsonExtract.Text = [System.String]'0'
 $txtBronsonExtract.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
-$txtBronsonExtract.add_TextChanged($txtBronsonExt_TextChanged)
 #
 #txtAdelhyde
 #
@@ -425,7 +420,6 @@ $txtAdelhyde.TabIndex = [System.Int32]4
 $txtAdelhyde.TabStop = $false
 $txtAdelhyde.Text = [System.String]'0'
 $txtAdelhyde.TextAlign = [System.Windows.Forms.HorizontalAlignment]::Right
-$txtAdelhyde.add_TextChanged($txtAdelhyde_TextChanged)
 #
 #cbKarmotrine
 #
@@ -515,6 +509,7 @@ $AutoValHallA.ClientSize = (New-Object -TypeName System.Drawing.Size -ArgumentLi
 $AutoValHallA.Controls.Add($groupBox2)
 $AutoValHallA.Controls.Add($groupBox1)
 $AutoValHallA.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Segoe UI',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+$AutoValHallA.Icon = ([System.Drawing.Icon]$resources.'$this.Icon')
 $AutoValHallA.MaximizeBox = $false
 $AutoValHallA.MaximumSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]500,[System.Int32]1200))
 $AutoValHallA.MinimumSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]290,[System.Int32]400))

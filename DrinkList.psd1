@@ -1,42 +1,59 @@
 @{
+    # Set these before launching the app
+    Options = @{
+        # Keep the window next to the game window
+        Sticky = $false
+        # Keep the window on top
+        OnTop = $false
+    }
+    # Currently unused
+    Properties = @{
+        Iced    = @{
+            Name  = 'Iced'
+            Char  = 'a'
+            Color = '#2187aa'
+        }
+        Aged    = @{
+            Name  = 'Aged'
+            Char  = 's'
+            Color = '#b851a5'
+        }
+        Blended = @{
+            Name  = 'Blended'
+            Char  = 'd'
+            Color = '#8B0000'
+        }
+    }
+    # Defines the key to press for each ingredient, and a color sample from the game UI
     Ingredients = @{
         Adelhyde = @{
-            Name = 'Adelhyde'
-            Key = 'q'
+            Name  = 'Adelhyde'
+            Char  = 'q'
             Color = '#e22743'
         }
         BronsonExtract = @{
-            Name = 'Bronson Extract'
-            Key = 'w'
+            Name  = 'Bronson Extract'
+            Char  = 'w'
             Color = '#fec73d'
         }
         PowderedDelta = @{
-            Name = 'Powdered Delta'
-            Key = 'e'
+            Name  = 'Powdered Delta'
+            Char  = 'e'
             Color = '#87a6e3'
         }
         Flanergide = @{
-            Name = 'Flanergide'
-            Key = 'r'
+            Name  = 'Flanergide'
+            Char  = 'r'
             Color = '#568B28'
         }
         Karmotrine = @{
-            Name = 'Karmotrine'
-            Key = 't'
+            Name  = 'Karmotrine'
+            Char  = 't'
             Color = '#c5e4e4'
         }
-        Iced = @{
-            Name = 'Iced'
-            Key = 'a'
-            Color = '#2187aa'
-        }
-        Aged = @{
-            Name = 'Aged'
-            Key = 's'
-            Color = '#b851a5'
-        }
     }
-    BadTouch      = @{
+    # List of drinks. DO NOT MODIFY!
+    BadTouch        = @{
         Name        = 'Bad Touch'
         Ingredients = @{
             Adelhyde       = 0
@@ -47,11 +64,11 @@
         }
         Iced        = $true
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sour', 'Classy', 'Vintage')
         Price       = 250
     }
-    Beer          = @{
+    Beer            = @{
         Name        = 'Beer'
         Ingredients = @{
             Adelhyde       = 1
@@ -62,11 +79,11 @@
         }
         Iced        = $false
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Bubbly', 'Classy', 'Vintage')
         Price       = 200
     }
-    BleedingJane  = @{ # DOUBLED
+    BleedingJane    = @{
         Name        = 'Bleeding Jane'
         Ingredients = @{
             Adelhyde       = 0
@@ -77,11 +94,11 @@
         }
         Iced        = $false
         Aged        = $false
-        Blend       = $true
+        Blended     = $true
         Tags        = @('Spicy', 'Classic', 'Sobering')
         Price       = 200
     }
-    BloomLight    = @{
+    BloomLight      = @{
         Name        = 'Bloom Light'
         Ingredients = @{
             Adelhyde       = 4
@@ -92,11 +109,11 @@
         }
         Iced        = $true
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Spicy', 'Promo', 'Bland')
         Price       = 230
     }
-    BlueFairy     = @{
+    BlueFairy       = @{
         Name        = 'Blue Fairy'
         Ingredients = @{
             Adelhyde       = 4
@@ -107,11 +124,11 @@
         }
         Iced        = $false
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sweet', 'Girly', 'Soft')
         Price       = 170
     }
-    Brandtini     = @{
+    Brandtini       = @{
         Name        = 'Brandtini'
         Ingredients = @{
             Adelhyde       = 6
@@ -122,12 +139,12 @@
         }
         Iced        = $false
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sweet', 'Classy', 'Happy')
         Price       = 250
 
     }
-    CobaltVelvet  = @{
+    CobaltVelvet    = @{
         Name        = 'Cobalt Velvet'
         Ingredients = @{
             Adelhyde       = 2
@@ -138,11 +155,11 @@
         }
         Iced        = $true
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Bubbly', 'Classy', 'Burning')
         Price       = 280
     }
-    CreviceSpike  = @{ # DOUBLED
+    CreviceSpike    = @{
         Name        = 'Crevice Spike'
         Ingredients = @{
             Adelhyde       = 0
@@ -153,11 +170,11 @@
         }
         Iced        = $false
         Aged        = $false
-        Blend       = $true
+        Blended     = $true
         Tags        = @('Sour', 'Manly', 'Sobering')
         Price       = 140
     }
-    FlamingMaoi   = @{
+    FlamingMaoi     = @{
         Name        = 'Flaming Maoi'
         Ingredients = @{
             Adelhyde       = 1
@@ -168,11 +185,11 @@
         }
         Iced        = $false
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sour', 'Classic', 'Classy')
         Price       = 150
     }
-    FluffyDream   = @{
+    FluffyDream     = @{
         Name        = 'Fluffy Dream'
         Ingredients = @{
             Adelhyde       = 3
@@ -183,11 +200,11 @@
         }
         Iced        = $false
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sour', 'Girly', 'Soft')
         Price       = 170
     }
-    FringeWeaver  = @{
+    FringeWeaver    = @{
         Name        = 'Fringe Weaver'
         Ingredients = @{
             Adelhyde       = 1
@@ -198,11 +215,11 @@
         }
         Iced        = $false
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Bubbly', 'Classy', 'Strong')
         Price       = 260
     }
-    FrothyWater   = @{
+    FrothyWater     = @{
         Name        = 'Frothy Water'
         Ingredients = @{
             Adelhyde       = 1
@@ -213,11 +230,11 @@
         }
         Iced        = $false
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Bubbly', 'Classic', 'Bland')
         Price       = 150
     }
-    GrizzlyTemple = @{ # DOUBLED
+    GrizzlyTemple   = @{
         Name        = 'Grizzly Temple'
         Ingredients = @{
             Adelhyde       = 3
@@ -228,11 +245,11 @@
         }
         Iced        = $false
         Aged        = $false
-        Blend       = $true
+        Blended     = $true
         Tags        = @('Bitter', 'Promo', 'Bland')
         Price       = 220
     }
-    GutPunch      = @{
+    GutPunch        = @{
         Name        = 'Gut Punch'
         Ingredients = @{
             Adelhyde       = 0
@@ -243,11 +260,11 @@
         }
         Iced        = $false
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Bitter', 'Manly', 'Strong')
         Price       = 80
     }
-    Marsblast     = @{ # DOUBLED
+    Marsblast       = @{
         Name        = 'Marsblast'
         Ingredients = @{
             Adelhyde       = 0
@@ -258,11 +275,11 @@
         }
         Iced        = $false
         Aged        = $false
-        Blend       = $true
+        Blended     = $true
         Tags        = @('Spicy', 'Manly', 'Strong')
         Price       = 170
     }
-    Mercuryblast  = @{
+    Mercuryblast    = @{
         Name        = 'Mercuryblast'
         Ingredients = @{
             Adelhyde       = 1
@@ -273,11 +290,11 @@
         }
         Iced        = $true
         Aged        = $false
-        Blend       = $true
+        Blended     = $true
         Tags        = @('Sour', 'Classy', 'Burning')
         Price       = 250
     }
-    Moonblast     = @{
+    Moonblast       = @{
         Name        = 'Moonblast'
         Ingredients = @{
             Adelhyde       = 6
@@ -288,11 +305,11 @@
         }
         Iced        = $true
         Aged        = $false
-        Blend       = $true
+        Blended     = $true
         Tags        = @('Sweet', 'Girly', 'Happy')
         Price       = 180
     }
-    PianoMan      = @{
+    PianoMan        = @{
         Name        = 'Piano Man'
         Ingredients = @{
             Adelhyde       = 2
@@ -303,11 +320,11 @@
         }
         Iced        = $true
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sour', 'Promo', 'Strong')
         Price       = 320
     }
-    PianoWoman    = @{
+    PianoWoman      = @{
         Name        = 'Piano Woman'
         Ingredients = @{
             Adelhyde       = 5
@@ -318,11 +335,11 @@
         }
         Iced        = $false
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sweet', 'Promo', 'Happy')
         Price       = 320
     }
-    PileDriver    = @{
+    PileDriver      = @{
         Name        = 'Pile Driver'
         Ingredients = @{
             Adelhyde       = 0
@@ -333,11 +350,11 @@
         }
         Iced        = $false
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Bitter', 'Manly', 'Burning')
         Price       = 160
     }
-    SparkleStar   = @{
+    SparkleStar     = @{
         Name        = 'Sparkle Star'
         Ingredients = @{
             Adelhyde       = 2
@@ -348,11 +365,11 @@
         }
         Iced        = $false
         Aged        = $true
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sweet', 'Girly', 'Happy')
         Price       = 150
     }
-    SugarRush     = @{
+    SugarRush       = @{
         Name        = 'Sugar Rush'
         Ingredients = @{
             Adelhyde       = 2
@@ -363,12 +380,12 @@
         }
         Iced        = $false
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sweet', 'Girly', 'Happy')
         Price       = 150
 
     }
-    SunshineCloud = @{ # DOUBLED
+    SunshineCloud   = @{
         Name        = 'Sunshine Cloud'
         Ingredients = @{
             Adelhyde       = 2
@@ -379,11 +396,11 @@
         }
         Iced        = $true
         Aged        = $false
-        Blend       = $true
+        Blended     = $true
         Tags        = @('Bitter', 'Girly', 'Soft')
         Price       = 150
     }
-    Suplex        = @{
+    Suplex          = @{
         Name        = 'Suplex'
         Ingredients = @{
             Adelhyde       = 0
@@ -394,11 +411,11 @@
         }
         Iced        = $true
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Bitter', 'Manly', 'Burning')
         Price       = 160
     }
-    ZenStar       = @{
+    ZenStar         = @{
         Name        = 'Zen Star'
         Ingredients = @{
             Adelhyde       = 4
@@ -409,7 +426,7 @@
         }
         Iced        = $true
         Aged        = $false
-        Blend       = $false
+        Blended     = $false
         Tags        = @('Sour', 'Promo', 'Bland')
         Price       = 210
     }

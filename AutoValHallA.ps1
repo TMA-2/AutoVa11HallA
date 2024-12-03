@@ -1,3 +1,12 @@
+using namespace System
+using namespace System.Windows.Forms
+
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+    <#Category#>'PSUseDeclaredVarsMoreThanAssignments',
+    <#CheckId#>$null,
+    Justification = 'The declaration of variables is done in the designer script.'
+)]
+
 #region UI Functions
 <# NOTE: Currently unused
 $btnSend_KeyPress = {
@@ -28,12 +37,7 @@ $listDrinks_SelectedValueChanged = {
     # set selected drink
     $SelectedDrink = $script:DrinkList.Values | ? {$_.Name -eq $this.SelectedItem}
     # if Big is checked, double each ingredient
-    # BUG: Certain drinks /show/ doubled ingredients when selected, but the internal values are correct...
-    #   - Bleeding Jane
-    #   - Crevice Spike
-    #   - Grizzly Temple
-    #   - Marsblast
-    #   - Sunshine Cloud
+    # FIXED: Certain drinks /show/ doubled ingredients when selected, but the internal values are correct...
     $BigDrink = if($AutoValHallA.cbBig.Checked -eq $true) { 2 } else { 1 }
     $AutoValHallA.SuspendLayout()
     # set ingredient amounts
@@ -48,16 +52,15 @@ $listDrinks_SelectedValueChanged = {
     $AutoValHallA.txtPowderedDelta.Text = [int]$SelectedDrink.Ingredients.PowderedDelta * $BigDrink
     $AutoValHallA.txtFlanergide.Text = [int]$SelectedDrink.Ingredients.Flanergide * $BigDrink
     # _Out ('Adelhyde: {0}, Big: {1}, Result: {2}' -f $SelectedDrink.Ingredients.Adelhyde, $BigDrink, $AutoValHallA.txtAdelhyde.Text) -lvl Verbose
-    _Out "Adelhyde text: $($AutoValHallA.txtAdelhyde.Text), Lines[0]: $($AutoValHallA.txtAdelhyde.Lines[0]), ToString: $($AutoValHallA.txtAdelhyde.ToString())" -lvl Verbose
     # set karmotrine amount
     if($SelectedDrink.Ingredients.Karmotrine -eq 'Optional') {
         $AutoValHallA.cbKarmotrine.Checked = $false
-        $AutoValHallA.cbKarmotrine.ReadOnly = $false
+        $AutoValHallA.cbKarmotrine.AutoCheck = $true
         $AutoValHallA.txtKarmotrine.Text = $script:OptionalKarmotrine
         $AutoValHallA.txtKarmotrine.ReadOnly = $false
     } else {
         $AutoValHallA.cbKarmotrine.Checked = $true
-        $AutoValHallA.cbKarmotrine.ReadOnly = $true
+        $AutoValHallA.cbKarmotrine.AutoCheck = $false
         $AutoValHallA.txtKarmotrine.ReadOnly = $true
         $AutoValHallA.txtKarmotrine.Text = [int]$SelectedDrink.Ingredients.Karmotrine * $BigDrink
     }
@@ -66,7 +69,7 @@ $listDrinks_SelectedValueChanged = {
     # set drink mix properties
     $AutoValHallA.cbIced.Checked = $SelectedDrink.Iced
     $AutoValHallA.cbAged.Checked = $SelectedDrink.Aged
-    $AutoValHallA.cbBlended.Checked = $SelectedDrink.Blend
+    $AutoValHallA.cbBlended.Checked = $SelectedDrink.Blended
     # set tag text
     $AutoValHallA.linkTag1.Text = $SelectedDrink.Tags[0]
     $AutoValHallA.linkTag2.Text = $SelectedDrink.Tags[1]
@@ -153,8 +156,8 @@ $btnSend_Click = {
             _Out "Game window found @ $script:GamehWnd"
         } else {
             _Out "Game window not found!"
-            Return
         }
+        Return
     }
     
     # only attempt to send keys if the game window exists
@@ -281,6 +284,29 @@ function _Out {
 }
 #endregion Set up logging
 
+function Split-SendString {
+    Param(
+        [string]
+        $SendString
+    )
+    $ReturnStr = [string[]]@()
+    foreach($chr in $SendString.ToCharArray()) {
+        if($chr -eq '{') {
+            $bracket = $true
+            [string]$tempstr = $chr
+        } elseif($chr -eq '}') {
+            $bracket = $false
+            $tempstr += $chr
+            $ReturnStr += $tempstr
+        } elseif($bracket) {
+            $tempstr += $chr
+        } else {
+            $ReturnStr += $chr
+        } 
+    }
+    Return $ReturnStr
+}
+
 function FillDrinkList {
     $autoValHallA.listDrinks.BeginUpdate()
     $autoValHallA.listDrinks.Items.Clear()
@@ -314,14 +340,13 @@ function GetGameWindow {
     $GameProcess = Get-Process 'VA-11 Hall A' -ea 0
     $hWnd = $GameProcess.MainWindowHandle
     if($null -ne $hWnd) {
-        _out "Game window found @ $hWnd from PID $($GameProcess.Id), Title $($GameProcess.MainWindowTitle)" -lvl Verbose
+        _out "Game window found @ $hWnd[$($hWnd.GetType().Name)] from PID $($GameProcess.Id), Title $($GameProcess.MainWindowTitle)" -lvl Verbose
     } else {
         _out "Game window not found." -lvl Warning
         Return
     }
 
     If ($hWnd -ne 0 -and $null -ne $hWnd) {
-        _Out "Game process found @ $hWnd [$($hWnd.GetType())]" -lvl Verbose
         $autoValHallA.btnSend.Text = 'Mix'
         Return $hWnd
     } else {
@@ -341,17 +366,9 @@ function MakeDrink {
 
     $Drink = $script:DrinkList.Values | Where-Object { $_.Name -eq $DrinkName }
 
-    # set up the wait time for blended drinks
-    if ($Drink.Blend) {
-        $SleepWait = 6000
-    } else {
-        # otherwise, stopping immediately is fine
-        $SleepWait = 1000
-    }
-
     # _Out "Karmotrine value: $($Drink.Ingredients.Karmotrine), UI: $($AutoValHallA.txtKarmotrine.Text), Pref: $script:OptionalKarmotrine" -lvl Verbose
 
-    # send keys
+    # format: {key [number of presses]}
     # send chars with a 0 aren't sent
     $SendString = '{{q {0}}}{{w {1}}}{{e {2}}}{{r {3}}}' -f $AutoValHallA.txtAdelhyde.Text, $AutoValHallA.txtBronsonExtract.Text, $AutoValHallA.txtPowderedDelta.Text, $AutoValHallA.txtFlanergide.Text
     if ($Drink.Ingredients.Karmotrine -eq 'Optional') {
@@ -378,28 +395,61 @@ function MakeDrink {
         Return
     }
 
-    # start mixing
-    for($i = 0; $i -lt $AutoValHallA.txtAdelhyde.Text; $i++) {
+    $Ingredients = @{
+        Adelhyde = $AutoValHallA.txtAdelhyde.Text
+        BronsonExtract = $AutoValHallA.txtBronsonExtract.Text
+        PowderedDelta = $AutoValHallA.txtPowderedDelta.Text
+        Flanergide = $AutoValHallA.txtFlanergide.Text
+        Karmotrine = $AutoValHallA.txtKarmotrine.Text
+    }
+
+    :Ingredients foreach ($ingredient in $Ingredients.GetEnumerator()) {
+        $key = $script:IngredientList[$ingredient.Key].Char
+        for ($i = 0; $i -lt [int]$ingredient.Value; $i++) {
+            if($cbKarmotrine.Checked -eq $false -and $ingredient.Key -eq 'Karmotrine') {
+                # skip karmotrine if it's optional and the value is 0
+                Continue Ingredients
+            }
+            [System.Windows.Forms.SendKeys]::Send($key)
+            # the game's framerate is locked at 30, so we need to wait a bit between key presses
+            Start-Sleep -Milliseconds 40
+        }
+    }
+
+    <# for($i = 0; $i -lt $AutoValHallA.txtAdelhyde.Text; $i++) {
         $SendKey = $IngredientList.Values.Where{$_.Name -eq 'Adelhyde'}.Key
         [System.Windows.Forms.SendKeys]::Send($SendKey)
+        Start-Sleep -ms 30
     }
     for($i = 0; $i -lt $AutoValHallA.txtBronsonExtract.Text; $i++) {
         $SendKey = $IngredientList.Values.Where{$_.Name -eq 'Bronson Extract'}.Key
         [System.Windows.Forms.SendKeys]::Send($SendKey)
+        Start-Sleep -ms 30
     }
     for($i = 0; $i -lt $AutoValHallA.txtPowderedDelta.Text; $i++) {
         $SendKey = $IngredientList.Values.Where{$_.Name -eq 'Powdered Delta'}.Key
         [System.Windows.Forms.SendKeys]::Send($SendKey)
+        Start-Sleep -ms 30
     }
     for($i = 0; $i -lt $AutoValHallA.txtFlanergide.Text; $i++) {
         $SendKey = $IngredientList.Values.Where{$_.Name -eq 'Flanergide'}.Key
         [System.Windows.Forms.SendKeys]::Send($SendKey)
+        Start-Sleep -ms 30
     }
     for($i = 0; $i -lt $AutoValHallA.txtKarmotrine.Text; $i++) {
         $SendKey = $IngredientList.Values.Where{$_.Name -eq 'Karmotrine'}.Key
         [System.Windows.Forms.SendKeys]::Send($SendKey)
+        Start-Sleep -ms 30
+    } #>
+
+    # set up the wait time for blended drinks
+    if ($Drink.Blended) {
+        $SleepWait = 6000
+    } else {
+        # otherwise, stopping immediately is fine
+        $SleepWait = 1000
     }
-    [System.Windows.Forms.SendKeys]::SendWait($SendString)
+
     # Send-AU3Key $SendString
     if ($drink.Iced) {
         # Send-AU3Key 'a'
@@ -428,7 +478,7 @@ function AlignWindow {
     # $GameWindowPos = Get-AU3WinPos -WinHandle $script:GamehWnd
     $GameWindowPos = New-Object 'User32+RECT'
     if([User32]::GetWindowRect($script:GamehWnd, [ref]$GameWindowPos)) {
-        _out "Game window position: Left: $($GameWindowPos.Left), Top: $($GameWindowPos.Top), Right: $($GameWindowPos.Right)"
+        _out "Game window position: Left: $($GameWindowPos.Left), Top: $($GameWindowPos.Top), Right: $($GameWindowPos.Right)" -lvl Verbose
     } else {
         _out "Failed to get game window position." -lvl Warning
         Return
@@ -438,21 +488,35 @@ function AlignWindow {
     $iTargetY = $GameWindowPos.Top
 
     # TODO: Attempt to keep form to the right of the game window
-    $AutoValHallA.Location.X = $iTargetX
-    $AutoValHallA.Location.Y = $iTargetY
-    # $AutoValHallA.TopMost = $true
+    if ($script:DrinkList.Options.Sticky) {
+        $AutoValHallA.SetDesktopLocation($iTargetX, $iTargetY)
+    }
+    if ($script:DrinkList.Options.OnTop) {
+        $AutoValHallA.TopMost = $true
+    }
 }
 
+function LoadData {
+    _out "Setting up drink list from $PSScriptRoot\DrinkList.psd1..."
+    Do {
+        try {
+            $script:DrinkList = Import-PowerShellDataFile "$PSScriptRoot\DrinkList.psd1"
+        } catch {
+            $Err = $_
+            Write-Error "Exception $($Err.Exception.HResult) reading drink list > $($Err.Exception.Message)" -Exception $Err.Exception
+            # Owner param wants a [IWin32Window]
+            $MsgResult = [MessageBox]::Show("Error reading data file from $PSScriptRoot\DrinkList.psd1!`n`n'$($Err.Exception.Message)'", 'Auto VA-11 Hall-A', [MessageBoxButtons]::RetryCancel, [MessageBoxIcon]::Error, [MessageBoxDefaultButton]::Button1)
+            if ($MsgResult -eq 'Cancel') {
+                Exit 2 # file not found return code
+            }
+        }
+    } Until ($script:DrinkList)
+
+    $script:IngredientList = $script:DrinkList.Ingredients
+}
 #endregion: Functions
 
 #region Constants
-_out "Setting up drink list"
-$script:DrinkList = Import-PowerShellDataFile "$PSScriptRoot\DrinkList.psd1"
-
-# this is currently unused
-$script:IngredientList = $script:DrinkList.Ingredients
-
-# user preferences
 $script:OptionalKarmotrine = 0
 $script:SelectedTag = ""
 #endregion Constants
@@ -460,14 +524,6 @@ $script:SelectedTag = ""
 #region: Load assemblies
 # this has to be used instead of Set-Au3WinActive because AutoItX is temperamental
 $script:TypeSetFore = @'
-    using System;
-    using System.Runtime.InteropServices;
-    public class User32 {
-        [DllImport("user32.dll")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
-    }
-'@
-$script:TypeGetPos = @'
     using System;
     using System.Runtime.InteropServices;
     public class User32 {
@@ -479,7 +535,8 @@ $script:TypeGetPos = @'
             public int Bottom;
         }
         [DllImport("user32.dll")]
-        // public static extern bool GetWindowRect(IntPtr hWnd, ref RECT rect);
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+        [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
     }
 '@
@@ -488,7 +545,6 @@ try {
     _out "Adding Windows Forms assembly and User32 types" -lvl Verbose
     Add-Type -AssemblyName 'System.Windows.Forms'
     Add-Type -TypeDefinition $script:TypeSetFore -Language CSharp
-    Add-Type -TypeDefinition $script:TypeGetPos -Language CSharp
     # Import-Module "$PSScriptRoot\Resources\AutoItX.psd1"
 } catch {
     $Err = $_
@@ -526,6 +582,8 @@ $AutoValHallA_Load = {
         _out "Window not found. Waiting for user to link game window." -lvl Warning
     }
 
+    LoadData
+
     _out "Populating initial drink list"
     FillDrinkList
     
@@ -547,8 +605,8 @@ $AutoValHallA.listDrinks.DataSource = $AutoValHallA.BindingSource1
 $AutoValHallA.listDrinks.DisplayMember = 'Name'
 #>
 
-$ErrorActionPreference = 'SilentlyContinue'
-$VerbosePreference = 'Continue'
+# $ErrorActionPreference = 'SilentlyContinue'
+# $VerbosePreference = 'Continue'
 
 # NOTE: Moved to Autovalhalla_load
 
@@ -561,12 +619,12 @@ while ($AutoValHallA.Visible) {
     [System.Windows.Forms.Application]::DoEvents()
     Start-Sleep -Milliseconds 30
     
-    # update window placement every minute
-    if($script:GamehWnd -and $script:sw.Elapsed.Seconds -eq 1 -and $script:sw.Elapsed.Milliseconds -lt 60) {
+    # update window placement every 1 seconds
+    if($script:GamehWnd -and $script:sw.Elapsed.Seconds%1 -eq 0 -and $script:sw.Elapsed.Milliseconds -lt 60) {
         AlignWindow
     }
 
-    # check for game window every 5 minutes
+    # check for game window automatically every 5 minutes
     if($script:sw.Elapsed.Minutes%5 -eq 0 -and $script:sw.Elapsed.Milliseconds -lt 60 -and !$ProcessChecked) {
         $GameProcess = Get-Process "VA-11 Hall A" -ea SilentlyContinue
         # process found
@@ -577,11 +635,11 @@ while ($AutoValHallA.Visible) {
                 _Out "Game window handle changed from $script:GamehWnd to $($GameProcess.MainWindowHandle)" -lvl Verbose
                 $script:GamehWnd = $GameProcess.MainWindowHandle
             }
+            $ProcessChecked = $true
         } else {
             _Out "Game window not found." -lvl Warning
             $AutoValHallA.btnSend.Text = 'Link'
         }
-        $ProcessChecked = $true
     } elseif([math]::Floor($sw.Elapsed.TotalSeconds)%360 -eq 0) {
         # reset handle check every 10 minutes
         $ProcessChecked = $false
