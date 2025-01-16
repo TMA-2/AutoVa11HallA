@@ -100,6 +100,14 @@ $listDrinks_SelectedValueChanged = {
     $AutoValHallA.ResumeLayout()
 }
 
+$textMain_KeyPress = {
+    # Handle arrow key navigation for ListView
+    if($_.KeyChar -eq [char]38 -or $_.KeyChar -eq [char]40) {  # Up (38) or Down (40) arrow
+        $AutoValHallA.listDrinks.Focus()
+        $_.Handled = $true
+    }
+}
+
 $textMain_TextChanged = {
     $Text = $this.Text
     # Garbage attempted data binding
@@ -150,7 +158,7 @@ $cbBig_CheckedChanged = {
 
 $btnSend_Click = {
     if($this.Text -eq 'Link') {
-        $script:GamehWnd = GetGameWindow
+        $script:GamehWnd = GetGameWindow -ProcessName $global:GameTitle
         if($script:GamehWnd -ne 0 -and $null -ne $script:GamehWnd) {
             $this.Text = 'Mix'
             _Out "Game window found @ $script:GamehWnd"
@@ -284,25 +292,48 @@ function _Out {
 }
 #endregion Set up logging
 
+# ref: https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys.send?view=netframework-4.8.1#remarks
 function Split-SendString {
+    # TODO: Handle modifiers like SHIFT (+), CTRL (^), ALT (%)
     Param(
         [string]
         $SendString
     )
-    $ReturnStr = [string[]]@()
+    $ReturnStr = [hashtable[]]@()
     foreach($chr in $SendString.ToCharArray()) {
+        # the start of a bracketed value
         if($chr -eq '{') {
             $bracket = $true
             [string]$tempstr = $chr
         } elseif($chr -eq '}') {
+            # the end of a bracketed value
             $bracket = $false
             $tempstr += $chr
-            $ReturnStr += $tempstr
+            if($tempstr -match "{. ?\d+}") {
+                $REString = '{(?:(?<key>\w+)|(?<key>.+) ?(?<num>\d*))}'
+                # this should match a special character like ENTER or a key with a number of presses
+                $REStrKey = [regex]::Match($tempstr, $REString).Groups['key'].Value
+                $REStrNum = [regex]::Match($tempstr, $REString).Groups['num'].Value
+                $ReturnStr += @{
+                    Key = $REStrKey
+                    Num = $REStrNum
+                }
+            } elseif($tempstr -match "{\w+}") {
+                $ReturnStr += @{
+                    Key = $tempstr
+                    Num = 1
+                }
+            }
         } elseif($bracket) {
+            # inside a bracketed value
             $tempstr += $chr
         } else {
-            $ReturnStr += $chr
-        } 
+            # all other keys
+            $ReturnStr += @{
+                Key = $chr
+                Num = 1
+            }
+        }
     }
     Return $ReturnStr
 }
@@ -333,11 +364,14 @@ function FilterDrinkList {
 }
 
 function GetGameWindow {
+    Param (
+        $ProcessName = 'VA-11 Hall A'
+    )
     # initial check for running game process
     # $hWnd = Get-AU3WinHandle -Title 'VA-11 Hall-A: Cyberpunk Bartender Action'
     # _out 'Game window not found with Get-AU3WinHandle. Trying by process MainWindowHandle...' -lvl Warning
     # window title: "VA-11 Hall-A: Cyberpunk Bartender Action"
-    $GameProcess = Get-Process 'VA-11 Hall A' -ea 0
+    $GameProcess = Get-Process $ProcessName -ea 0
     $hWnd = $GameProcess.MainWindowHandle
     if($null -ne $hWnd) {
         _out "Game window found @ $hWnd[$($hWnd.GetType().Name)] from PID $($GameProcess.Id), Title $($GameProcess.MainWindowTitle)" -lvl Verbose
@@ -385,10 +419,6 @@ function MakeDrink {
     # disable button until mixing is done
     $AutoValHallA.btnSend.Enabled = $false
 
-    # _out 'Attempting Assert-AU3WinActive...' -lvl Verbose
-    # $GameWindow = Assert-AU3WinActive -WinHandle $script:GamehWnd
-    # _Out "Assert-AU3WinActive result: $GameWindow" -lvl Verbose
-
     # this is necessary as Assert-AU3WinActive doesn't want to work
     if([User32]::SetForegroundWindow($script:GamehWnd) -eq $false) {
         _Out "Failed to set game window to foreground!" -lvl Error
@@ -411,7 +441,8 @@ function MakeDrink {
                 Continue Ingredients
             }
             [System.Windows.Forms.SendKeys]::Send($key)
-            # the game's framerate is locked at 30, so we need to wait a bit between key presses
+            # Game is locked at 30FPS / ~33.3 ms
+            # so we need to wait at least 33ms between key presses
             Start-Sleep -Milliseconds 40
         }
     }
@@ -450,25 +481,19 @@ function MakeDrink {
         $SleepWait = 1000
     }
 
-    # Send-AU3Key $SendString
     if ($drink.Iced) {
-        # Send-AU3Key 'a'
         [System.Windows.Forms.SendKeys]::SendWait('a')
     }
     if ($drink.Aged) {
-        # Send-AU3Key 's'
         [System.Windows.Forms.SendKeys]::SendWait('s')
     }
 
     Start-Sleep -Milliseconds 500
 
-    # Send-AU3Key '{SPACE}'
     [System.Windows.Forms.SendKeys]::SendWait(' ')
     
-    # sleep longer for blended drinks
     Start-Sleep -Milliseconds $SleepWait
     
-    # Send-AU3Key '{SPACE}'
     [System.Windows.Forms.SendKeys]::SendWait(' ')
 
     # re-enable send button
@@ -497,26 +522,28 @@ function AlignWindow {
 }
 
 function LoadData {
-    _out "Setting up drink list from $PSScriptRoot\DrinkList.psd1..."
+    _out "Setting up drink list from $script:DataFile..."
     Do {
         try {
-            $script:DrinkList = Import-PowerShellDataFile "$PSScriptRoot\DrinkList.psd1"
+            $script:AppData = Import-PowerShellDataFile $script:DataFile
         } catch {
             $Err = $_
             Write-Error "Exception $($Err.Exception.HResult) reading drink list > $($Err.Exception.Message)" -Exception $Err.Exception
             # Owner param wants a [IWin32Window]
-            $MsgResult = [MessageBox]::Show("Error reading data file from $PSScriptRoot\DrinkList.psd1!`n`n'$($Err.Exception.Message)'", 'Auto VA-11 Hall-A', [MessageBoxButtons]::RetryCancel, [MessageBoxIcon]::Error, [MessageBoxDefaultButton]::Button1)
+            $MsgResult = [MessageBox]::Show("Error reading data file from $script:DataFile!`n`n'$($Err.Exception.Message)'", 'Auto VA-11 Hall-A', [MessageBoxButtons]::RetryCancel, [MessageBoxIcon]::Error, [MessageBoxDefaultButton]::Button1)
             if ($MsgResult -eq 'Cancel') {
                 Exit 2 # file not found return code
             }
         }
-    } Until ($script:DrinkList)
+    } Until ($script:AppData)
 
-    $script:IngredientList = $script:DrinkList.Ingredients
+    $script:DrinkList = $script:AppData.Drinks
+    $script:IngredientList = $script:AppData.Ingredients
 }
 #endregion: Functions
 
 #region Constants
+$script:DataFile = "$PSScriptRoot\AutoValHallA-Data.psd1"
 $script:OptionalKarmotrine = 0
 $script:SelectedTag = ""
 #endregion Constants
@@ -552,9 +579,6 @@ try {
     Write-Error "Exception $($Err.Exception.HResult) loading types > $($Err.Exception.Message)" -Exception $Err.Exception
     Exit 2 # file not found return code
 }
-
-# Game is locked at 30FPS / ~33.3 ms
-# Set-AU3Option -Option "SendKeyDelay" -Value 50
 #endregion: Load assemblies
 
 $AutoValHallA_Activated = {
@@ -574,7 +598,7 @@ $AutoValHallA_FormClosing = {
 $AutoValHallA_Load = {
     # initial window check
     _out "Initial check for game window..."
-    $script:GamehWnd = GetGameWindow
+    $script:GamehWnd = GetGameWindow -ProcessName $global:GameTitle
 
     if($script:GamehWnd) {
         _out "Handle found: $script:GamehWnd"
@@ -610,10 +634,11 @@ $AutoValHallA.listDrinks.DisplayMember = 'Name'
 
 # NOTE: Moved to Autovalhalla_load
 
+$global:GameTitle = "VA-11 Hall A"
+
 _Out "Starting form"
 $AutoValHallA.Show()
 $AutoValHallA.Focus()
-
 
 while ($AutoValHallA.Visible) {
     [System.Windows.Forms.Application]::DoEvents()
@@ -626,7 +651,7 @@ while ($AutoValHallA.Visible) {
 
     # check for game window automatically every 5 minutes
     if($script:sw.Elapsed.Minutes%5 -eq 0 -and $script:sw.Elapsed.Milliseconds -lt 60 -and !$ProcessChecked) {
-        $GameProcess = Get-Process "VA-11 Hall A" -ea SilentlyContinue
+        $GameProcess = Get-Process $global:GameTitle -ea SilentlyContinue
         # process found
         if($GameProcess) {
             # handle still valid
