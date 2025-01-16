@@ -502,8 +502,10 @@ function MakeDrink {
 function AlignWindow {
     # $GameWindowPos = Get-AU3WinPos -WinHandle $script:GamehWnd
     $GameWindowPos = New-Object 'User32+RECT'
-    if([User32]::GetWindowRect($script:GamehWnd, [ref]$GameWindowPos)) {
-        _out "Game window position: Left: $($GameWindowPos.Left), Top: $($GameWindowPos.Top), Right: $($GameWindowPos.Right)" -lvl Verbose
+    if($script:GamehWnd) {
+        if ([User32]::GetWindowRect($script:GamehWnd, [ref]$GameWindowPos)) {
+            _out "Game window position: Left: $($GameWindowPos.Left), Top: $($GameWindowPos.Top), Right: $($GameWindowPos.Right)" -lvl Verbose
+        }
     } else {
         _out "Failed to get game window position." -lvl Warning
         Return
@@ -522,10 +524,18 @@ function AlignWindow {
 }
 
 function LoadData {
-    _out "Setting up drink list from $script:DataFile..."
+    $DataFilename = Split-Path $script:DataFile -Leaf
+    _out "Setting up drink list from $DataFilename..."
     Do {
         try {
-            $script:AppData = Import-PowerShellDataFile $script:DataFile
+            if(Test-Path $script:DataFile -ea SilentlyContinue) {
+                $script:AppData = Import-PowerShellDataFile $script:DataFile
+            } else {
+                _out "Data file not found. Extracting from resources..."
+                $MyManifest = Export-Resources -Name $DataFilename
+                _out "Saving filename $($MyManifest.Name)"
+                $MyManifest.Content | Out-File -FilePath $script:DataFile -Encoding UTF8
+            }
         } catch {
             $Err = $_
             Write-Error "Exception $($Err.Exception.HResult) reading drink list > $($Err.Exception.Message)" -Exception $Err.Exception
@@ -539,6 +549,62 @@ function LoadData {
 
     $script:DrinkList = $script:AppData.Drinks
     $script:IngredientList = $script:AppData.Ingredients
+}
+
+function Export-Resources {
+    param(
+        [Parameter(Position=0)]
+        [string[]]$Name
+    )
+    
+    $Return = @()
+    $ProcessName = (Get-Process -Id $PID).Name
+
+    try {
+        $Stream = [System.Reflection.Assembly]::GetEntryAssembly().GetManifestResourceStream("$ProcessName.g.resources")
+    } catch {
+        $Err = $_
+        Throw "Exception $($Err.Exception.HResult) getting resource stream '$ProcessName.g.resources' > $($Err.Exception.Message)"
+    }
+
+    _Out "Extracting resources from '$ProcessName.g.resources'..." -lvl Verbose
+
+    try {
+        $KV = [System.Resources.ResourceReader]::new($Stream)
+        if($Name) {
+            # Extract named resource(s)
+            $Name | ForEach-Object {
+                $KVrsrc = $KV | Where-Object Key -EQ $PSItem
+                if($KVrsrc) {
+                    $RsrcName = $KVrsrc.Key
+                    $RsrcContent = $KVrsrc.Value
+                    _Out "Extracting resource $RsrcName..." -lvl Verbose
+                    $Return += @{
+                        Name = $RsrcName
+                        Content = [System.IO.StreamReader]::new($RsrcContent).ReadToEnd()
+                    }
+                } else {
+                    Write-Warning "Resource file $PSItem not found in resources!"
+                }
+            }
+        } else {
+            # Extract all resources
+            $KV | ForEach-Object {
+                $RsrcName = $PSItem.Key
+                $RsrcContent = $PSItem.Value
+                _Out "Extracting resource $RsrcName..." -lvl Verbose
+                $Return += @{
+                    Name = $RsrcName
+                    Content = [IO.StreamReader]::new($RsrcContent).ReadToEnd()
+                }
+            }
+        }
+    } catch {
+        $Err = $_
+        Throw "Exception $($Err.Exception.HResult) extracting file from resource stream '$ProcessName.g.resources' > $($Err.Exception.Message)"
+    }
+
+    Return $Return
 }
 #endregion: Functions
 
@@ -650,7 +716,7 @@ while ($AutoValHallA.Visible) {
     }
 
     # check for game window automatically every 5 minutes
-    if($script:sw.Elapsed.Minutes%5 -eq 0 -and $script:sw.Elapsed.Milliseconds -lt 60 -and !$ProcessChecked) {
+    if($script:sw.Elapsed.Minutes%5 -eq 0 -and $script:sw.Elapsed.Seconds -eq 0 -and $script:sw.Elapsed.Milliseconds -lt 60 -and !$ProcessChecked) {
         $GameProcess = Get-Process $global:GameTitle -ea SilentlyContinue
         # process found
         if($GameProcess) {
@@ -662,7 +728,7 @@ while ($AutoValHallA.Visible) {
             }
             $ProcessChecked = $true
         } else {
-            _Out "Game window not found." -lvl Warning
+            # _Out "Game window not found." -lvl Warning
             $AutoValHallA.btnSend.Text = 'Link'
         }
     } elseif([math]::Floor($sw.Elapsed.TotalSeconds)%360 -eq 0) {

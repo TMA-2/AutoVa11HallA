@@ -15,11 +15,11 @@
         # The file description to display in the assembly properties.
         FileDescription     = 'Auto VA-11 Hall-A Game Utility'
         # The file version to display in the assembly properties.
-        FileVersion         = '0.2.8'
+        FileVersion         = '0.2.9'
         # The product name to display in the assembly properties.
         ProductName         = 'Auto VA-11 Hall-A'
         # The product version to display in the assembly properties.
-        ProductVersion      = '0.2.8'
+        ProductVersion      = '0.2.9'
         # The copyright to display in the assembly properties.
         Copyright           = '(c) 2024 TMA-2'
         # Whether the executable requires elevation to run. This setting is only supported on Windows. Either $true or $false.
