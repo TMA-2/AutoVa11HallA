@@ -15,11 +15,11 @@
         # The file description to display in the assembly properties.
         FileDescription     = 'Auto VA-11 Hall-A Game Utility'
         # The file version to display in the assembly properties.
-        FileVersion         = '0.2.7'
+        FileVersion         = '0.2.8'
         # The product name to display in the assembly properties.
         ProductName         = 'Auto VA-11 Hall-A'
         # The product version to display in the assembly properties.
-        ProductVersion      = '0.2.7'
+        ProductVersion      = '0.2.8'
         # The copyright to display in the assembly properties.
         Copyright           = '(c) 2024 TMA-2'
         # Whether the executable requires elevation to run. This setting is only supported on Windows. Either $true or $false.
@@ -62,7 +62,7 @@
         DisableQuickEdit    = $false
         # An array of resource strings to include with the executable. These resources will be stored embedded.
         Resources           = [string[]]@(
-            'C:\users\tma2\onedrive\source\autova11halla\DrinkList.psd1',
+            'C:\users\tma2\onedrive\source\autova11halla\AutoValHallA-Data.psd1',
             'C:\users\tma2\onedrive\source\autova11halla\AutoValHallA.resources.ps1',
             'C:\users\tma2\onedrive\source\autova11halla\Resources\Jill64.ico'
             <#
@@ -103,6 +103,6 @@
         # Whether to include nested modules of packaged modules. Requires Modules = $true.
         NestedModules       = $false
         # An array of modules to ignore during packaging.
-        # IgnoredModules      = @()
+        # IgnoredModules      = [string[]]@()
     }
 }
