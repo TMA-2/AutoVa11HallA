@@ -118,35 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AutoItX.psd1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX.psd1;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
-    <comment>module metadata</comment>
-  </data>
-  <data name="AutoItX3.PowerShell" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX3.PowerShell.dll;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="AutoItX3.Assembly" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX3.Assembly.dll;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="AutoItX3 Main DLL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX3.dll;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="AutoItX3.Assembly XML" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX3.Assembly.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="AutoItX3_x64 Main DLL" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX3_x64.dll;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="AutoItX3_x64 Library" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX3_x64_DLL.lib;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="AutoItX3 Library" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX3_DLL.lib;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="AutoItX3 Header" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AutoItX3_DLL.h;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="DrinkList" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\DrinkList.psd1;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="AutoValHallA-Data" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>AutoValHallA-Data.psd1;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

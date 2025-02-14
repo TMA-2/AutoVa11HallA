@@ -580,7 +580,7 @@ function Export-Resources {
                     $RsrcContent = $KVrsrc.Value
                     _Out "Extracting resource $RsrcName..." -lvl Verbose
                     $Return += @{
-                        Name = $RsrcName
+                        Name    = $RsrcName
                         Content = [System.IO.StreamReader]::new($RsrcContent).ReadToEnd()
                     }
                 } else {
@@ -594,7 +594,7 @@ function Export-Resources {
                 $RsrcContent = $PSItem.Value
                 _Out "Extracting resource $RsrcName..." -lvl Verbose
                 $Return += @{
-                    Name = $RsrcName
+                    Name    = $RsrcName
                     Content = [IO.StreamReader]::new($RsrcContent).ReadToEnd()
                 }
             }

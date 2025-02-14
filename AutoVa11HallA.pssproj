@@ -12,16 +12,16 @@
     <Author>Jon Dunham</Author>
     <Version>0.1.4</Version>
     <Guid>d8592339-36b0-4bff-a714-6153626894b3</Guid>
-    <PowerShellVersion>Windows PowerShell</PowerShellVersion>
+    <PowerShellVersion>7.4.0</PowerShellVersion>
     <ProcessorArchitecture />
     <PackageAsExecutable>True</PackageAsExecutable>
     <Bundle>True</Bundle>
     <Obfuscate>False</Obfuscate>
     <HideConsoleWindow>True</HideConsoleWindow>
     <RequireElevation>False</RequireElevation>
-    <PackageModules>True</PackageModules>
+    <PackageModules>False</PackageModules>
     <HighDPISupport>True</HighDPISupport>
-    <DotNetVersion>net472</DotNetVersion>
+    <DotNetVersion>net8.0</DotNetVersion>
     <FileVersion>0.1.4</FileVersion>
     <FileDescription>Auto VA-11 Hall-A</FileDescription>
     <ProductName>Auto VA-11 Hall-A Game Utility</ProductName>
@@ -146,6 +146,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoValHallA-Data.psd1" />
     <Compile Include="AutoValHallA.designer.ps1">
       <SubType>Code</SubType>
       <DependentUpon>AutoValHallA.ps1</DependentUpon>
@@ -153,7 +154,7 @@
     <Compile Include="AutoValHallA.ps1">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DrinkList.psd1" />
+    <Compile Include="package.psd1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AutoValHallA.resx">
